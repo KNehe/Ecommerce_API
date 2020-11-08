@@ -9,35 +9,35 @@ class AuthService{
 
     findUserByEmail = async (email:string): Promise<any> =>{
 
-        //I used free MongoDB Atlas tier which doesn't allow usage of 'where' clause in the commented statement below
-        //await User.find({$where:email})
+        const user = await User.findOne({email});
 
-        //Decided to get all users and looping to find match as temporary solution to above commented code
-        //in case of upgrade the above commented can be used to find a user by email
-        const users = await User.find();
+        if(!user) return null;          
 
-        if(!users) return null;        
-        
-        for await (const user of users ){
-           if(user.email === email){
-               return user;
-           }
-        }
-
-        return null;
+        return user;
     }
 
     deleteUser = async (id:string): Promise<any> =>{
+
         return await User.findByIdAndDelete(id);
+
     }
 
     findUserById = async(id:string):Promise<any>=>{
+
         return await User.findById(id);
+
     }
 
-    updateName = async (userId:string, name:any):Promise<any> =>{
-        
+    updateName = async (userId:string, name:any):Promise<any> =>{     
+
         return await User.findByIdAndUpdate(userId,{name},{new:true,useFindAndModify:false});
+
+    }
+
+    findUserByResetToken = async (resetToken:string):Promise<any> =>{
+
+        return await User.findOne({passwordResetToken:resetToken});
+        
     }
 
     
