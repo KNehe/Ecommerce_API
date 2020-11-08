@@ -27,6 +27,19 @@ class AuthService{
         return null;
     }
 
+    deleteUser = async (id:string): Promise<any> =>{
+        return await User.findByIdAndDelete(id);
+    }
+
+    findUserById = async(id:string):Promise<any>=>{
+        return await User.findById(id);
+    }
+
+    updateName = async (userId:string, name:any):Promise<any> =>{
+        
+        return await User.findByIdAndUpdate(userId,{name},{new:true,useFindAndModify:false});
+    }
+
     
 
 }
