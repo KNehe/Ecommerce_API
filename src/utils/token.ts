@@ -8,7 +8,7 @@ dotenv.config({path:'./config.env'});
 class TokenUtils{
     
     
-    createJwt =  (id:number):string =>{
+    createJwt =  (id:string):string =>{
 
         const secret = process.env.JWT_SECRET;
         const jwtExpiryTime = process.env.JWT_EXPIRY_TIME;
