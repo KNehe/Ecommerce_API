@@ -28,7 +28,7 @@ import authService from './../services/authService';
 import tokenUtils from './../utils/token';
 import passwordUtils from './../utils/password';
 import validators from '../utils/validators';
-import {PASSWORD_RESET_SUCCESSFULLY_MSG, RESET_PASSWORD_REQUEST_MSG, RESET_PASSWORD_SUBJECT } from '../utils/successMessages';
+import {PASSWORD_RESET_SUCCESSFULLY_MSG, RESET_PASSWORD_REQUEST_MSG, RESET_PASSWORD_SUBJECT, SIGN_UP_THANK_YOU, SIGN_UP_THANK_YOU_SUBJECT } from '../utils/successMessages';
 import mailService from './../services/mailService';
 
 
@@ -53,6 +53,8 @@ class AuthController{
             );
 
             const token = tokenUtils.createJwt(newUser._id);
+
+            await mailService.sendEmail(email,SIGN_UP_THANK_YOU,SIGN_UP_THANK_YOU_SUBJECT);
 
             res.status(SUCCESS).json({
                 status: SUCCESS_MSG,
