@@ -10,8 +10,18 @@ const DELETE_USER_MSG = 'An error occurred while deleting user';
 const BAD_FORMAT_ID = 'Id provided is in a bad format';
 const ATLEAST_ONE_FIELD_REQUIRED = 'Atleast one filed is required';
 const UPDATE_USER_ERR_MSG = 'An error occurred while updating user';
-
+const EMAIL_REQUIRED = 'Email is required';
+const USER_WITH_EMAIL_NOT_EXISTS ='No account is registered with email provided';
+const SEND_RESET_PASSWORD_EMAIL_ERR =' An error occurred while sending a reset email';
+const SEND_EMAIL_ERROR = 'An error occured while sending email';
+const PASSWORD_REQUIRED_FOR_RESET = 'New Password required';
+const PASSWORD_RESET_TOKEN_REQUIRED = 'Password reset token not provided';
+const PASSWORD_RESET_TOKEN_INVALID ='Invalid password reset token';
+const PASSWORD_RESET_TOKEN_EXPIRED ='Password reset time has expired';
+const RESET_PASSWORD_ERR = 'An error occurred while changing your password';
 
 export { SIGN_UP_ERR_MSG, USER_WITH_EMAIL_EXISTS_MSG, NO_JWT_SECRET_MSG, NO_JWT_EXPIRY_TIME_MSG,NO_EMPTY_FIELD, 
     INVALID_CREDENTIALS,SIGN_IN_ERR_MSG ,USER_WITH_ID_NOT_FOUND,DELETE_USER_MSG, BAD_FORMAT_ID,ATLEAST_ONE_FIELD_REQUIRED,
-    UPDATE_USER_ERR_MSG};
+    UPDATE_USER_ERR_MSG,EMAIL_REQUIRED,USER_WITH_EMAIL_NOT_EXISTS,SEND_RESET_PASSWORD_EMAIL_ERR,SEND_EMAIL_ERROR,
+    PASSWORD_REQUIRED_FOR_RESET,PASSWORD_RESET_TOKEN_REQUIRED,PASSWORD_RESET_TOKEN_INVALID,PASSWORD_RESET_TOKEN_EXPIRED,
+    RESET_PASSWORD_ERR};
