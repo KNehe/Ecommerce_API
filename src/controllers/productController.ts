@@ -8,10 +8,15 @@ import { IMAGE_UPLOAD_ERROR, LIMIT_FILE_SIZE_ERROR,
      NAME_PRICE_IMGURL_REQUIRED, 
      PRODUCT_EXISTS,
      ERROR_ADDING_PRODUCT,
-     ERROR_ADDING_IMAGE} from "../utils/errorMessages";
+     ERROR_ADDING_IMAGE,
+     ERROR_FETCHING_PRODUCTS,
+     ERROR_FETCHING_PRODUCT,
+     PRODUCT_ID_REQUIRED,
+     BAD_FORMAT_ID} from "../utils/errorMessages";
 import uploadService from "../services/uploadService";
 import productService from "../services/productService";
 import {  PRODUCT_ADDED } from "../utils/successMessages";
+import validators from "../utils/validators";
 
 class ProductController{
     
@@ -19,9 +24,9 @@ class ProductController{
         try{
             const { name, price ,imageUrl}: { name:string, price:number,imageUrl:string} = req.body;
 
-            if(!name || !price ||!imageUrl) return next(new AppError(NAME_PRICE_IMGURL_REQUIRED,INTERNAL_SERVER_ERROR));
-
-            if(productService.findProductByName(name) != null) return next(new AppError(PRODUCT_EXISTS,INTERNAL_SERVER_ERROR));
+            if(!name || !price ||!imageUrl) return next(new AppError(NAME_PRICE_IMGURL_REQUIRED,BAD_REQUEST));
+             
+            if(await productService.findProductByName(name) != null) return next(new AppError(PRODUCT_EXISTS,BAD_REQUEST));
 
             const newProduct = await productService.addProduct({name,price,imageUrl});
 
@@ -79,6 +84,45 @@ class ProductController{
         if(err.message == WRONG_IMG_MIME) return next(new AppError(WRONG_IMG_MIME,BAD_REQUEST));
                     
         return next(new AppError(IMAGE_UPLOAD_ERROR,BAD_REQUEST));
+    }
+
+    getAllProducts = async (req:Request,res:Response,next:NextFunction):Promise<any> =>{
+        try{
+            const products = await productService.getAllProducts();
+            
+            res.status(SUCCESS).json({
+                status:SUCCESS_MSG,
+                data:{
+                    products
+                }
+            });
+
+        }catch(e){
+            console.log(e.message);
+            return next( new AppError(ERROR_FETCHING_PRODUCTS,INTERNAL_SERVER_ERROR));
+        }
+    }
+
+    getAllProductById = async (req:Request,res:Response,next:NextFunction):Promise<any> =>{
+        try{
+
+            const productId = req.params.id;
+
+            if(!productId) return next(new AppError(PRODUCT_ID_REQUIRED,BAD_REQUEST));
+
+            if(!validators.isObjectIdValid(productId)) return next( new AppError(BAD_FORMAT_ID,BAD_REQUEST));
+            
+            const product = await productService.findProductById(productId);
+            
+            res.status(SUCCESS).json({
+                status:SUCCESS_MSG,
+                data:{ product }
+            });
+
+        }catch(e){
+            console.log(e.message);
+            return next( new AppError(ERROR_FETCHING_PRODUCT,INTERNAL_SERVER_ERROR));
+        }
     }
 
 }
