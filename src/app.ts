@@ -1,8 +1,9 @@
 import express, { NextFunction, Request, Response } from 'express';
 import morgan from 'morgan';
-import userRoutes from '././routes/userRoutes';
+import userRoutes from './routes/userRoutes';
 import { NOT_FOUND } from './utils/statusCodes';
 import cors from 'cors';
+import productRoutes from './routes/productRoutes';
 
 const app = express();
 
@@ -15,6 +16,7 @@ if(process.env.NODE_ENV === "development"){
 app.use(cors());
 
 app.use("/api/v1/users",userRoutes);
+app.use("/api/v1/products",productRoutes);
 
 app.all("*",(req:Request,res:Response,next:NextFunction)=>{
   res.status(NOT_FOUND).send(`${req.originalUrl} not found`);
