@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { NextFunction, Request, Response } from "express";
-import { BAD_REQUEST, INTERNAL_SERVER_ERROR, SUCCESS } from "../utils/statusCodes";
+import { BAD_REQUEST, INTERNAL_SERVER_ERROR, NO_CONTENT, SUCCESS } from "../utils/statusCodes";
 import { LIMIT_FILE_SIZE, SUCCESS_MSG } from "../utils/statusMessages";
 import AppError from "../utils/appError";
 import { IMAGE_UPLOAD_ERROR, LIMIT_FILE_SIZE_ERROR,
@@ -12,7 +12,11 @@ import { IMAGE_UPLOAD_ERROR, LIMIT_FILE_SIZE_ERROR,
      ERROR_FETCHING_PRODUCTS,
      ERROR_FETCHING_PRODUCT,
      PRODUCT_ID_REQUIRED,
-     BAD_FORMAT_ID} from "../utils/errorMessages";
+     BAD_FORMAT_ID,
+     ERROR_DELETING_PRODUCT,
+     ATLEAST_ONE_FIELD_REQUIRED,
+     ERROR_UPDATING_PRODUCT,
+     PRODUCT_NOT_EXISTS} from "../utils/errorMessages";
 import uploadService from "../services/uploadService";
 import productService from "../services/productService";
 import {  PRODUCT_ADDED } from "../utils/successMessages";
@@ -106,7 +110,7 @@ class ProductController{
     getAllProductById = async (req:Request,res:Response,next:NextFunction):Promise<any> =>{
         try{
 
-            const productId = req.params.id;
+            const productId:string = req.params.id;
 
             if(!productId) return next(new AppError(PRODUCT_ID_REQUIRED,BAD_REQUEST));
 
@@ -122,6 +126,66 @@ class ProductController{
         }catch(e){
             console.log(e.message);
             return next( new AppError(ERROR_FETCHING_PRODUCT,INTERNAL_SERVER_ERROR));
+        }
+    }
+
+    deleteProduct = async (req:Request,res:Response,next:NextFunction):Promise<any> =>{
+        try{
+            const productId:string = req.params.id;
+
+            if(!productId) return next(new AppError(PRODUCT_ID_REQUIRED,BAD_REQUEST));
+
+            if(!validators.isObjectIdValid(productId)) return next( new AppError(BAD_FORMAT_ID,BAD_REQUEST));
+
+            const product = await productService.findProductById(productId);
+            
+            if(!product) return next( new AppError(PRODUCT_NOT_EXISTS,BAD_REQUEST));
+
+            const result = await productService.deleteProductById(productId);
+
+            if(!result) return next( new AppError(ERROR_DELETING_PRODUCT,INTERNAL_SERVER_ERROR));
+
+            res.status(NO_CONTENT).json({
+                status:SUCCESS_MSG
+            });
+
+        }catch(e){
+            console.log(e.message);
+            return next( new AppError(ERROR_DELETING_PRODUCT,INTERNAL_SERVER_ERROR));
+        }
+    }
+
+    updateProductById = async (req:Request,res:Response,next:NextFunction):Promise<any> =>{
+        try{
+
+            const productId:string = req.params.id;
+
+            if(!productId) return next(new AppError(PRODUCT_ID_REQUIRED,BAD_REQUEST));
+
+            if(!validators.isObjectIdValid(productId)) return next( new AppError(BAD_FORMAT_ID,BAD_REQUEST));
+
+            const product = await productService.findProductById(productId);
+            
+            if(!product) return next( new AppError(PRODUCT_NOT_EXISTS,BAD_REQUEST));
+
+            const { name,price,imageUrl }: { name:string,price:number,imageUrl:string } = req.body;        
+
+            if(!name.trim() || !price || !imageUrl.trim()) return next(new AppError(ATLEAST_ONE_FIELD_REQUIRED,BAD_REQUEST));
+
+            const result = await productService.updateProduct(productId,{name,price,imageUrl});
+            
+            if(!result) return next( new AppError(ERROR_UPDATING_PRODUCT,INTERNAL_SERVER_ERROR));
+
+            res.status(SUCCESS).json({
+                status: SUCCESS_MSG,
+                data:{
+                    updatedProduct:result
+                }
+            });
+
+        }catch(e){
+           console.log(e.message);
+           return next( new AppError(ERROR_UPDATING_PRODUCT,INTERNAL_SERVER_ERROR));
         }
     }
 
