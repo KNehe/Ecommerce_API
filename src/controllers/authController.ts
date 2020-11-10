@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import {NextFunction, Request, Response} from 'express';
-import {BAD_REQUEST, INTERNAL_SERVER_ERROR, NO_CONTENT, SUCCESS,UNAUTHORISED} from './../utils/statusCodes';
+import {BAD_REQUEST, CREATED, INTERNAL_SERVER_ERROR, NO_CONTENT, SUCCESS,UNAUTHORISED} from './../utils/statusCodes';
 import {SUCCESS_MSG} from './../utils/statusMessages';
 import AppError from './../utils/appError';
 
@@ -38,13 +38,10 @@ class AuthController{
         try{
             const { name, email, password }: { name:string, email:string, password:string} = req.body;
 
-            if(!name.trim() || !email.trim() || !password){
-                return next( new AppError(NO_EMPTY_FIELD,BAD_REQUEST) );
-            }
+            if(!name.trim() || !email.trim() || !password) return next( new AppError(NO_EMPTY_FIELD,BAD_REQUEST) );
 
-            if(await authService.findUserByEmail(email) != null){
-                return next( new AppError(USER_WITH_EMAIL_EXISTS_MSG,BAD_REQUEST) );
-            }
+            if(await authService.findUserByEmail(email) != null)
+                           return next( new AppError(USER_WITH_EMAIL_EXISTS_MSG,BAD_REQUEST) );
 
            const newUser = await authService.signUp(
             name,
@@ -56,7 +53,7 @@ class AuthController{
 
             await mailService.sendEmail(email,SIGN_UP_THANK_YOU,SIGN_UP_THANK_YOU_SUBJECT);
 
-            res.status(SUCCESS).json({
+            res.status(CREATED).json({
                 status: SUCCESS_MSG,
                 data:{ 
                     token,
@@ -81,15 +78,12 @@ class AuthController{
         try{
             const { email, password } : {email:string, password:string} = req.body;
 
-            if(!email.trim() || !password){
-                return next( new AppError(NO_EMPTY_FIELD,BAD_REQUEST) );
-            }
+            if(!email.trim() || !password) return next( new AppError(NO_EMPTY_FIELD,BAD_REQUEST) );
 
             const user = await authService.findUserByEmail(email);
 
-            if(!user || !( await passwordUtils.correctPassword(password,user.password))){
+            if(!user || !( await passwordUtils.correctPassword(password,user.password)))
                 return next(new AppError(INVALID_CREDENTIALS,UNAUTHORISED));
-            }
 
             const token = tokenUtils.createJwt(user._id);
 
@@ -111,15 +105,11 @@ class AuthController{
     
     deleteUser = async (req:Request,res:Response,next:NextFunction):Promise<any> =>{
         try{
-        const id : string = req.params.id;
+        const id : string = req.params.id.trim();
         
-        if(!validators.isObjectIdValid(id)){
-            return next( new AppError(BAD_FORMAT_ID,BAD_REQUEST));
-        }
+        if(!validators.isObjectIdValid(id)) return next( new AppError(BAD_FORMAT_ID,BAD_REQUEST));
 
-        if(!await authService.findUserById(id)){
-            return next( new AppError(USER_WITH_ID_NOT_FOUND,BAD_REQUEST));
-        }
+        if(!await authService.findUserById(id)) return next( new AppError(USER_WITH_ID_NOT_FOUND,BAD_REQUEST));
 
         await authService.deleteUser(id);
 
@@ -136,22 +126,15 @@ class AuthController{
     
     updateName = async(req:Request,res:Response,next:NextFunction):Promise<any> =>{
         try{
-        const id : string = req.params.id;
+        const id : string = req.params.id.trim();
         
-        if(!validators.isObjectIdValid(id)){
-            return next( new AppError(BAD_FORMAT_ID,BAD_REQUEST));
-        }
+        if(!validators.isObjectIdValid(id)) return next( new AppError(BAD_FORMAT_ID,BAD_REQUEST));
 
-        if(!await authService.findUserById(id)){
-            return next( new AppError(USER_WITH_ID_NOT_FOUND,BAD_REQUEST));
-        }
+        if(!await authService.findUserById(id)) return next( new AppError(USER_WITH_ID_NOT_FOUND,BAD_REQUEST));    
 
         const {name}: {name:string} = req.body;
 
-        if( !name?.trim()){
-            return next( new AppError(ATLEAST_ONE_FIELD_REQUIRED,BAD_REQUEST));
-        }
-
+        if( !name?.trim()) return next( new AppError(ATLEAST_ONE_FIELD_REQUIRED,BAD_REQUEST));
     
         const updatedUser = await authService.updateName(id,name);
 
@@ -176,15 +159,11 @@ class AuthController{
         try{
             const {email}: {email:string} = req.body;
 
-            if( !email?.trim()){
-               return next( new AppError(EMAIL_REQUIRED,BAD_REQUEST));
-            }
-            
+            if( !email?.trim()) return next( new AppError(EMAIL_REQUIRED,BAD_REQUEST));
+
             const user = await authService.findUserByEmail(email);
 
-            if(!user){
-                return next( new AppError(USER_WITH_EMAIL_NOT_EXISTS,BAD_REQUEST) );
-            }
+            if(!user) return next( new AppError(USER_WITH_EMAIL_NOT_EXISTS,BAD_REQUEST) );
 
             const resetToken = user.createPasswordResetToken();
             await user.save({ validateBeforeSave:false});
@@ -212,24 +191,16 @@ class AuthController{
             const {password}: {password:string} = req.body;
             const resetToken : string = req.params.resetToken;
 
-            if( !password?.trim()){
-               return next( new AppError(PASSWORD_REQUIRED_FOR_RESET,BAD_REQUEST));
-            }
+            if( !password?.trim()) return next( new AppError(PASSWORD_REQUIRED_FOR_RESET,BAD_REQUEST));
 
-            if( !resetToken?.trim()){
-                return next( new AppError(PASSWORD_RESET_TOKEN_REQUIRED,BAD_REQUEST));
-             }
+            if( !resetToken?.trim()) return next( new AppError(PASSWORD_RESET_TOKEN_REQUIRED,BAD_REQUEST));
             
             const user = await authService.findUserByResetToken(resetToken);
             
-            if(!user){
-                return next( new AppError(PASSWORD_RESET_TOKEN_INVALID,BAD_REQUEST));
-            }
+            if(!user) return next( new AppError(PASSWORD_RESET_TOKEN_INVALID,BAD_REQUEST));
             
-            if(new Date() > user.passwordResetExpires){
-                return next( new AppError(PASSWORD_RESET_TOKEN_EXPIRED,BAD_REQUEST));
-            }
-
+            if(new Date() > user.passwordResetExpires) return next( new AppError(PASSWORD_RESET_TOKEN_EXPIRED,BAD_REQUEST));
+            
             user.password = password;
 
             user.passwordResetToken = undefined;

@@ -1,11 +1,11 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { NextFunction, Request, Response } from "express";
-import { BAD_REQUEST, INTERNAL_SERVER_ERROR, NO_CONTENT, SUCCESS } from "../utils/statusCodes";
+import { BAD_REQUEST, CREATED, INTERNAL_SERVER_ERROR, NO_CONTENT, SUCCESS } from "../utils/statusCodes";
 import { LIMIT_FILE_SIZE, SUCCESS_MSG } from "../utils/statusMessages";
 import AppError from "../utils/appError";
 import { IMAGE_UPLOAD_ERROR, LIMIT_FILE_SIZE_ERROR,
      NO_IMAGE_PROVIDED,WRONG_IMG_MIME,
-     NAME_PRICE_IMGURL_REQUIRED, 
+     NAME_PRICE_IMGURL_CATEGORY_REQUIRED, 
      PRODUCT_EXISTS,
      ERROR_ADDING_PRODUCT,
      ERROR_ADDING_IMAGE,
@@ -26,15 +26,15 @@ class ProductController{
     
     addProduct = async  (req:Request,res:Response,next:NextFunction):Promise<any> =>{
         try{
-            const { name, price ,imageUrl}: { name:string, price:number,imageUrl:string} = req.body;
+            const { name, price ,imageUrl, category }: { name:string, price:number,imageUrl:string,category:string} = req.body;
 
-            if(!name || !price ||!imageUrl) return next(new AppError(NAME_PRICE_IMGURL_REQUIRED,BAD_REQUEST));
+            if(!name.trim() || !price ||!imageUrl.trim() || !category.trim()) return next(new AppError(NAME_PRICE_IMGURL_CATEGORY_REQUIRED,BAD_REQUEST));
              
             if(await productService.findProductByName(name) != null) return next(new AppError(PRODUCT_EXISTS,BAD_REQUEST));
+            
+            const newProduct = await productService.addProduct({name,price,imageUrl,category});
 
-            const newProduct = await productService.addProduct({name,price,imageUrl});
-
-            res.status(SUCCESS).json({
+            res.status(CREATED).json({
                 status: SUCCESS_MSG,
                 data:{
                      message: PRODUCT_ADDED,
@@ -64,7 +64,7 @@ class ProductController{
                  
                  const imgCloudUrl = await uploadService.uploadToCloud(imgPath);
 
-                 res.status(SUCCESS).json({
+                 res.status(CREATED).json({
                      status: SUCCESS_MSG,
                      data:{                          
                           imageUrl:imgCloudUrl
@@ -110,7 +110,7 @@ class ProductController{
     getAllProductById = async (req:Request,res:Response,next:NextFunction):Promise<any> =>{
         try{
 
-            const productId:string = req.params.id;
+            const productId:string = req.params.id.trim();
 
             if(!productId) return next(new AppError(PRODUCT_ID_REQUIRED,BAD_REQUEST));
 
@@ -131,7 +131,7 @@ class ProductController{
 
     deleteProduct = async (req:Request,res:Response,next:NextFunction):Promise<any> =>{
         try{
-            const productId:string = req.params.id;
+            const productId:string = req.params.id.trim();
 
             if(!productId) return next(new AppError(PRODUCT_ID_REQUIRED,BAD_REQUEST));
 
@@ -158,7 +158,7 @@ class ProductController{
     updateProductById = async (req:Request,res:Response,next:NextFunction):Promise<any> =>{
         try{
 
-            const productId:string = req.params.id;
+            const productId:string = req.params.id.trim();
 
             if(!productId) return next(new AppError(PRODUCT_ID_REQUIRED,BAD_REQUEST));
 
@@ -168,11 +168,11 @@ class ProductController{
             
             if(!product) return next( new AppError(PRODUCT_NOT_EXISTS,BAD_REQUEST));
 
-            const { name,price,imageUrl }: { name:string,price:number,imageUrl:string } = req.body;        
+            const { name,price,imageUrl,category }: { name:string,price:number,imageUrl:string , category:string} = req.body;        
 
-            if(!name.trim() || !price || !imageUrl.trim()) return next(new AppError(ATLEAST_ONE_FIELD_REQUIRED,BAD_REQUEST));
+            if(!name || !price || !imageUrl || !category) return next(new AppError(ATLEAST_ONE_FIELD_REQUIRED,BAD_REQUEST));
 
-            const result = await productService.updateProduct(productId,{name,price,imageUrl});
+            const result = await productService.updateProduct(productId,{name,price,imageUrl,category});
             
             if(!result) return next( new AppError(ERROR_UPDATING_PRODUCT,INTERNAL_SERVER_ERROR));
 
