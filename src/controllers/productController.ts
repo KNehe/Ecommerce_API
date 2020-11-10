@@ -16,7 +16,9 @@ import { IMAGE_UPLOAD_ERROR, LIMIT_FILE_SIZE_ERROR,
      ERROR_DELETING_PRODUCT,
      ATLEAST_ONE_FIELD_REQUIRED,
      ERROR_UPDATING_PRODUCT,
-     PRODUCT_NOT_EXISTS} from "../utils/errorMessages";
+     PRODUCT_NOT_EXISTS,
+     SEARCH_VALUE_REQUIRED,
+     ERROR_SEARCHING} from "../utils/errorMessages";
 import uploadService from "../services/uploadService";
 import productService from "../services/productService";
 import {  PRODUCT_ADDED } from "../utils/successMessages";
@@ -186,6 +188,44 @@ class ProductController{
         }catch(e){
            console.log(e.message);
            return next( new AppError(ERROR_UPDATING_PRODUCT,INTERNAL_SERVER_ERROR));
+        }
+    }
+
+    searchByNameOrCategory = async (req:Request,res:Response,next:NextFunction):Promise<any> =>{
+        try{
+            const value:string = req.params.value;
+
+            if(!value.trim()) return next(new AppError(SEARCH_VALUE_REQUIRED, BAD_REQUEST));
+
+            const result = await productService.searchByNameOrCategory(value);
+
+            res.status(SUCCESS).json({
+                status: SUCCESS_MSG,
+                data:{ result     }
+            });
+
+        }catch(e){
+           console.log(e.message);
+           return next( new AppError(ERROR_SEARCHING,INTERNAL_SERVER_ERROR));
+        }
+    }
+
+    searchByCategory = async (req:Request,res:Response,next:NextFunction):Promise<any> =>{
+        try{
+            const category:string = req.params.category;
+
+            if(!category.trim()) return next(new AppError(SEARCH_VALUE_REQUIRED, BAD_REQUEST));
+
+            const result = await productService.searchByCategory(category);
+
+            res.status(SUCCESS).json({
+                status: SUCCESS_MSG,
+                data:{ result     }
+            });
+
+        }catch(e){
+           console.log(e.message);
+           return next( new AppError(ERROR_SEARCHING,INTERNAL_SERVER_ERROR));
         }
     }
 
