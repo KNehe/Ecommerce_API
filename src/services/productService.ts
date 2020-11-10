@@ -23,6 +23,10 @@ class ProductService{
         return await Product.find();
     }
 
+    deleteProductById = async (productId:string) :Promise<any>=>{
+        return await Product.findByIdAndDelete(productId);
+    }
+
 }
 
 export default new ProductService();

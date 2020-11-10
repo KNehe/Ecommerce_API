@@ -12,7 +12,9 @@ router.post("/addProductImage",productController.addProductImage);
 
 router
   .route('/:id')
-  .get(productController.getAllProductById);
+  .get(productController.getAllProductById)
+  .delete(productController.deleteProduct)
+  .patch(productController.updateProductById);
 
 
 export default router;
