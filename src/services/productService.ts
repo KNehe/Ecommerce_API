@@ -7,7 +7,7 @@ class ProductService{
         return await Product.create({...data});
     }
 
-    findProductById = async (productId:number) :Promise<any> =>{
+    findProductById = async (productId:string) :Promise<any> =>{
         return await Product.findById(productId);
     }
 
@@ -17,6 +17,10 @@ class ProductService{
 
     findProductByName = async (name:string):Promise<any> =>{
         return await Product.findOne({name});
+    }
+
+    getAllProducts = async ():Promise<any> =>{
+        return await Product.find();
     }
 
 }
