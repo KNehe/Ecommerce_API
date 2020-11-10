@@ -16,5 +16,9 @@ router
   .delete(productController.deleteProduct)
   .patch(productController.updateProductById);
 
+  router.get('/search/:value',productController.searchByNameOrCategory);
+  router.get('/search/category/:category',productController.searchByCategory);
+
+
 
 export default router;
