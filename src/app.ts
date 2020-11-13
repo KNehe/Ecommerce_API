@@ -43,7 +43,7 @@ passport.use( new FacebookStrategy({
 
     if(!user){
       const name = profile.name?.givenName + " " + profile.name?.familyName;
-      const user = await authService.createFaceBookUser(userMails[0].value,name,FACEBOOK_STRATEGY);
+      const user = await authService.createFaceBookOrGoogleUser(userMails[0].value,name,FACEBOOK_STRATEGY);
 
       if(!user) return  cb(new AppError(FB_AUTH_FAILED,BAD_REQUEST), false);
 
@@ -73,7 +73,7 @@ passport.use(new GoogleStrategy({
 
     if(!user){
       const name = profile.name?.givenName + " " + profile.name?.familyName;
-      const user = await authService.createFaceBookUser(userMails[0].value,name,GOOGLE_STRATEGY);
+      const user = await authService.createFaceBookOrGoogleUser(userMails[0].value,name,GOOGLE_STRATEGY);
       
       if(!user) return  done(new AppError(GOOGLE_AUTH_FAILED,BAD_REQUEST), false);
       
