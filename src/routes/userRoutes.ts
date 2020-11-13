@@ -19,6 +19,7 @@ router.post('/resetPassword/:resetToken', AuthService.resetPassword);
 
 router.get('/auth/facebook',passport.authenticate('facebook',{ session:false, scope:['email']}), AuthService.facebookAuth);
 
+router.get('/auth/google',passport.authenticate('google', { session:false, scope:['openid','profile', 'email']}), AuthService.googleAuth);
 
 export default router;
 

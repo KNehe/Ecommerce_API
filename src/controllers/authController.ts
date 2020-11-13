@@ -245,6 +245,28 @@ class AuthController{
             return next( new AppError(SIGN_IN_ERR_MSG,INTERNAL_SERVER_ERROR));
         }
     }
+    
+    googleAuth = async(req:Request, res:Response,next:NextFunction): Promise<any> =>{
+        try{
+            req.currentUser = req.user as UserDocument;
+            
+            const token = tokenUtils.createJwt(req.currentUser._id);
+    
+            res.status(SUCCESS).json({
+                status:SUCCESS_MSG,
+                data:{
+                    id:req.currentUser._id,
+                    name:req.currentUser.name,
+                    role:req.currentUser.role,
+                    token                    
+                }
+            });
+    
+            }catch(e){
+                console.log(e.message);
+                return next( new AppError(SIGN_IN_ERR_MSG,INTERNAL_SERVER_ERROR));
+            }
+    }
         
 
 }
