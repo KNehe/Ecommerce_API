@@ -9,4 +9,6 @@ router
     .get(cartOrderController.getCart)
     .delete(cartOrderController.deleteCart);
 
+router.post('/stripe',cartOrderController.paymentWithStripe);
+
 export default router;
