@@ -10,8 +10,9 @@ import passport from 'passport';
 import dotenv from 'dotenv';
 import authService from './services/authService';
 import AppError from './utils/appError';
-import { FB_AUTH_FAILED, FB_EMAIL_REQUIRED } from './utils/errorMessages';
-import { FACEBOOK_STRATEGY } from './utils/authStrategy';
+import { FB_AUTH_FAILED, FB_EMAIL_REQUIRED, GOOGLE_AUTH_FAILED, GOOGLE_EMAIL_REQUIRED } from './utils/errorMessages';
+import { FACEBOOK_STRATEGY, GOOGLE_STRATEGY } from './utils/authStrategy';
+import { Strategy as GoogleStrategy } from 'passport-google-oauth20';
 dotenv.config({path:'.env'});
 const app = express();
 
@@ -28,7 +29,7 @@ passport.use( new FacebookStrategy({
 
   clientID: process.env.FACEBOOK_APP_ID || '',
   clientSecret: process.env.FACEBOOK_APP_SECRET || '',
-  callbackURL: "http://localhost:3000/api/v1/users/auth/facebook",
+  callbackURL: `${process.env.BASE_URL}api/v1/users/auth/facebook`,
   profileFields: ['id', 'emails', 'name'],
   
 }, async(__, _,profile, cb)=>{
@@ -52,6 +53,38 @@ passport.use( new FacebookStrategy({
   }
   
 }));
+
+passport.use(new GoogleStrategy({
+  clientID: process.env.GOOGLE_CLIENT_ID || '',
+  clientSecret: process.env.GOOGLE_CLIENT_SECRET || '',
+  callbackURL: `${process.env.BASE_URL}api/v1/users/auth/google`
+}, async (_, __, profile, done)=>{
+    
+  try{
+    const userMails = profile != null? profile.emails : null;
+
+    if(! userMails || userMails?.length === 0)
+      return done(new AppError(GOOGLE_EMAIL_REQUIRED,BAD_REQUEST),false);
+
+    const user = await authService.findUserByEmail(userMails[0].value);
+
+    if(!user){
+      const name = profile.name?.givenName + " " + profile.name?.familyName;
+      const user = await authService.createFaceBookUser(userMails[0].value,name,GOOGLE_STRATEGY);
+      
+      if(!user) return  done(new AppError(GOOGLE_AUTH_FAILED,BAD_REQUEST), false);
+      
+      return done ('',user)
+    }    
+    
+    done('',user);
+
+  }catch(e){
+    console.log(e.message);
+    return done(new AppError(GOOGLE_AUTH_FAILED,BAD_REQUEST),false);
+  }
+}
+));
 
 app.use(passport.initialize());
 
