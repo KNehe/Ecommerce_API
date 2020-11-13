@@ -3,7 +3,7 @@ import dotenv from 'dotenv';
 import AppError from './appError';
 import { BAD_REQUEST } from './statusCodes';
 import { NO_JWT_SECRET_MSG , NO_JWT_EXPIRY_TIME_MSG} from './errorMessages';
-dotenv.config({path:'./config.env'});
+dotenv.config({path:'./../../.env'});
 
 class TokenUtils{
     
