@@ -1,5 +1,6 @@
 import express from 'express';
 import AuthService from './../controllers/authController';
+import passport from 'passport';
 
 
 const router = express.Router();
@@ -16,6 +17,7 @@ router.post('/forgotpassword', AuthService.forgotPassword);
 
 router.post('/resetPassword/:resetToken', AuthService.resetPassword);
 
+router.get('/auth/facebook',passport.authenticate('facebook',{ session:false, scope:['email']}), AuthService.facebookAuth);
 
 
 export default router;

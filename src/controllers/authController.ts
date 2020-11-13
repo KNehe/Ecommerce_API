@@ -30,6 +30,8 @@ import passwordUtils from './../utils/password';
 import validators from '../utils/validators';
 import {PASSWORD_RESET_SUCCESSFULLY_MSG, RESET_PASSWORD_REQUEST_MSG, RESET_PASSWORD_SUBJECT, SIGN_UP_THANK_YOU, SIGN_UP_THANK_YOU_SUBJECT } from '../utils/successMessages';
 import mailService from './../services/mailService';
+import { EMAIL_PASSWORD } from '../utils/authStrategy';
+import { UserDocument } from '../interfaces/models/userDocument';
 
 
 class AuthController{
@@ -46,7 +48,8 @@ class AuthController{
            const newUser = await authService.signUp(
             name,
                email,
-               password
+               password,
+               EMAIL_PASSWORD
             );
 
             const token = tokenUtils.createJwt(newUser._id);
@@ -219,6 +222,30 @@ class AuthController{
         return next( new AppError(RESET_PASSWORD_ERR,INTERNAL_SERVER_ERROR));
        }
     }
+
+    facebookAuth = async(req:Request, res:Response,next:NextFunction): Promise<any> =>{
+        try{
+
+        req.currentUser = req.user as UserDocument;
+        
+        const token = tokenUtils.createJwt(req.currentUser._id);
+
+        res.status(SUCCESS).json({
+            status:SUCCESS_MSG,
+            data:{
+                id:req.currentUser._id,
+                name:req.currentUser.name,
+                role:req.currentUser.role,
+                token                    
+            }
+        });
+
+        }catch(e){
+            console.log(e.message);
+            return next( new AppError(SIGN_IN_ERR_MSG,INTERNAL_SERVER_ERROR));
+        }
+    }
+        
 
 }
 

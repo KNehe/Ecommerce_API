@@ -3,8 +3,8 @@ import User from './../models/user';
 
 class AuthService{
 
-    signUp = async (name:string, email:string, password:string): Promise<any> =>{
-        return await User.create({name,email,password});
+    signUp = async (name:string, email:string, password:string,strategy:string): Promise<any> =>{
+        return await User.create({name,email,password,strategy});
     };
 
     findUserByEmail = async (email:string): Promise<any> =>{
@@ -38,6 +38,10 @@ class AuthService{
 
         return await User.findOne({passwordResetToken:resetToken});
         
+    }
+
+    createFaceBookUser = async(email:string,name:string,strategy:string):Promise<any> =>{
+     return await User.create({email,name,strategy, password:"User doesn't require password"});
     }
 
     
