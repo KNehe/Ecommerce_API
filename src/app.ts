@@ -37,19 +37,22 @@ passport.use( new FacebookStrategy({
     const userMails = profile != null? profile.emails : null;
 
     if(! userMails || userMails?.length === 0)
-      return new AppError(FB_EMAIL_REQUIRED,BAD_REQUEST);
+      return cb(new AppError(FB_EMAIL_REQUIRED,BAD_REQUEST),false);
 
     const user = await authService.findUserByEmail(userMails[0].value);
 
     if(!user){
       const name = profile.name?.givenName + " " + profile.name?.familyName;
-      const user = await authService.createFaceBookUser(userMails[0].value,name,FACEBOOK_STRATEGY);
+      const user = await authService.createFaceBookOrGoogleUser(userMails[0].value,name,FACEBOOK_STRATEGY);
+
+      if(!user) return  cb(new AppError(FB_AUTH_FAILED,BAD_REQUEST), false);
+
       return cb(null,user)
     }    
    cb(null,user);
   }catch(e){
-    cb(e,false);
-    return new AppError(FB_AUTH_FAILED,BAD_REQUEST);
+    console.log(e.message);
+    return cb(new AppError(FB_AUTH_FAILED,BAD_REQUEST),false);
   }
   
 }));
@@ -70,7 +73,7 @@ passport.use(new GoogleStrategy({
 
     if(!user){
       const name = profile.name?.givenName + " " + profile.name?.familyName;
-      const user = await authService.createFaceBookUser(userMails[0].value,name,GOOGLE_STRATEGY);
+      const user = await authService.createFaceBookOrGoogleUser(userMails[0].value,name,GOOGLE_STRATEGY);
       
       if(!user) return  done(new AppError(GOOGLE_AUTH_FAILED,BAD_REQUEST), false);
       

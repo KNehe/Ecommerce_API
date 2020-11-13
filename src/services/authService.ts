@@ -40,7 +40,7 @@ class AuthService{
         
     }
 
-    createFaceBookUser = async(email:string,name:string,strategy:string):Promise<any> =>{
+    createFaceBookOrGoogleUser = async(email:string,name:string,strategy:string):Promise<any> =>{
      return await User.create({email,name,strategy, password:"User doesn't require password"});
     }
 
