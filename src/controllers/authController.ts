@@ -22,7 +22,11 @@ import {
     PASSWORD_RESET_TOKEN_REQUIRED,
     PASSWORD_RESET_TOKEN_INVALID,
     PASSWORD_RESET_TOKEN_EXPIRED,
-    RESET_PASSWORD_ERR} from './../utils/errorMessages';
+    RESET_PASSWORD_ERR,
+    JWT_TOKEN_NOT_FOUND,
+    INVALID_JWT_TOKEN,
+    USER_ASSOCIATED_WITH_TOKEN_NOT_FOUND,
+    ROLE_NOT_ALLOWED} from './../utils/errorMessages';
 
 import authService from './../services/authService';
 import tokenUtils from './../utils/token';
@@ -266,6 +270,42 @@ class AuthController{
                 console.log(e.message);
                 return next( new AppError(SIGN_IN_ERR_MSG,INTERNAL_SERVER_ERROR));
             }
+    }
+
+    protectRoute =  async(req:Request, res:Response,next:NextFunction): Promise<any> =>{
+        let token;
+
+        if(req.headers.authorization && req.headers.authorization.startsWith("Bearer"))
+            token = req.headers.authorization.split(' ')[1];
+        
+        if(!token) return next( new AppError(JWT_TOKEN_NOT_FOUND, BAD_REQUEST) );
+
+        const {id, error} =  tokenUtils.decodeJwt(token);
+
+        if(error) return next(new AppError(INVALID_JWT_TOKEN,BAD_REQUEST));
+
+        const user = await authService.findUserById(id);
+
+        if(!user) return next(new AppError(USER_ASSOCIATED_WITH_TOKEN_NOT_FOUND,BAD_REQUEST));
+
+        req.currentUser = user;
+        
+        next();
+    }
+
+    restrictRoute = (roles:string[]) =>{
+
+        return async(req:Request, res:Response,next:NextFunction): Promise<any> =>{
+            
+            const userRole = req.currentUser.role || '';  
+
+            if(!roles.includes(userRole)){
+                next( new AppError(ROLE_NOT_ALLOWED,UNAUTHORISED));
+            }
+
+            next();
+
+        }
     }
         
 
