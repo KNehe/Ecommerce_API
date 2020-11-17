@@ -26,7 +26,10 @@ import {
     JWT_TOKEN_NOT_FOUND,
     INVALID_JWT_TOKEN,
     USER_ASSOCIATED_WITH_TOKEN_NOT_FOUND,
-    ROLE_NOT_ALLOWED} from './../utils/errorMessages';
+    ROLE_NOT_ALLOWED,
+    INVALID_EMAIL,
+    SHORT_PASSWORD,
+    WEAK_PASSWORD} from './../utils/errorMessages';
 
 import authService from './../services/authService';
 import tokenUtils from './../utils/token';
@@ -45,9 +48,15 @@ class AuthController{
             const { name, email, password }: { name:string, email:string, password:string} = req.body;
 
             if(!name.trim() || !email.trim() || !password) return next( new AppError(NO_EMPTY_FIELD,BAD_REQUEST) );
+            
+            if(!validators.isEmailValid(email)) return next( new AppError(INVALID_EMAIL,BAD_REQUEST));
+
+            if(!validators.isPasswordLong(password)) return next( new AppError(SHORT_PASSWORD,BAD_REQUEST));
+
+            if(!validators.isPasswordStrong(password)) return next( new AppError(WEAK_PASSWORD,BAD_REQUEST));
 
             if(await authService.findUserByEmail(email) != null)
-                           return next( new AppError(USER_WITH_EMAIL_EXISTS_MSG,BAD_REQUEST) );
+                return next( new AppError(USER_WITH_EMAIL_EXISTS_MSG,BAD_REQUEST) );
 
            const newUser = await authService.signUp(
             name,
