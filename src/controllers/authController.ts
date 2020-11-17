@@ -307,6 +307,10 @@ class AuthController{
 
         }
     }
+
+    sendNewOauthUserEMail = async (email:string):Promise<any> =>{
+        await mailService.sendEmail(email,SIGN_UP_THANK_YOU,SIGN_UP_THANK_YOU_SUBJECT);
+    }
         
 
 }
