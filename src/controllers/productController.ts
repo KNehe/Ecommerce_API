@@ -5,7 +5,7 @@ import { LIMIT_FILE_SIZE, SUCCESS_MSG } from "../utils/statusMessages";
 import AppError from "../utils/appError";
 import { IMAGE_UPLOAD_ERROR, LIMIT_FILE_SIZE_ERROR,
      NO_IMAGE_PROVIDED,WRONG_IMG_MIME,
-     NAME_PRICE_IMGURL_CATEGORY_REQUIRED, 
+     NAME_PRICE_IMGURL_CATEGORY_DETAILS_REQUIRED, 
      PRODUCT_EXISTS,
      ERROR_ADDING_PRODUCT,
      ERROR_ADDING_IMAGE,
@@ -23,6 +23,7 @@ import uploadService from "../services/uploadService";
 import productService from "../services/productService";
 import {  PRODUCT_ADDED } from "../utils/successMessages";
 import validators from "../utils/validators";
+import _ from 'lodash';
 
 class ProductController{
     
@@ -30,12 +31,12 @@ class ProductController{
         try{
             const { name, price ,imageUrl, category, details }: { name:string, price:number,imageUrl:string,category:string, details:string} = req.body;
 
-            if(!name.trim() || !price ||!imageUrl.trim() || !category.trim() || !details)
-             return next(new AppError(NAME_PRICE_IMGURL_CATEGORY_REQUIRED,BAD_REQUEST));
+            if(!name.trim() || !price ||!imageUrl.trim() || !category.trim() || !details.trim())
+             return next(new AppError(NAME_PRICE_IMGURL_CATEGORY_DETAILS_REQUIRED,BAD_REQUEST));
              
             if(await productService.findProductByName(name) != null) return next(new AppError(PRODUCT_EXISTS,BAD_REQUEST));
             
-            const newProduct = await productService.addProduct({name,price,imageUrl,category});
+            const newProduct = await productService.addProduct({name,price,imageUrl,category,details});
 
             res.status(CREATED).json({
                 status: SUCCESS_MSG,
@@ -173,9 +174,11 @@ class ProductController{
 
             const { name,price,imageUrl,category,details }: { name:string,price:number,imageUrl:string , category:string, details:string} = req.body;        
 
-            if(!name || !price || !imageUrl || !category || !details) return next(new AppError(ATLEAST_ONE_FIELD_REQUIRED,BAD_REQUEST));
+            if(!name && !price && !imageUrl && !category && !details) return next(new AppError(ATLEAST_ONE_FIELD_REQUIRED,BAD_REQUEST));
+            
+            const dataToUpdate = _.pickBy(req.body,_.identity);
 
-            const result = await productService.updateProduct(productId,{name,price,imageUrl,category,details});
+            const result = await productService.updateProduct(productId,dataToUpdate);
             
             if(!result) return next( new AppError(ERROR_UPDATING_PRODUCT,INTERNAL_SERVER_ERROR));
 

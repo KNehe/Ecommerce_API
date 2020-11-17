@@ -14,6 +14,7 @@ import { FB_AUTH_FAILED, FB_EMAIL_REQUIRED, GOOGLE_AUTH_FAILED, GOOGLE_EMAIL_REQ
 import { FACEBOOK_STRATEGY, GOOGLE_STRATEGY } from './utils/authStrategy';
 import { Strategy as GoogleStrategy } from 'passport-google-oauth20';
 import categoryRoutes from './routes/categoryRoutes';
+import authController from './controllers/authController';
 dotenv.config({path:'.env'});
 const app = express();
 
@@ -39,7 +40,7 @@ passport.use( new FacebookStrategy({
 
     if(! userMails || userMails?.length === 0)
       return cb(new AppError(FB_EMAIL_REQUIRED,BAD_REQUEST),false);
-
+   
     const user = await authService.findUserByEmail(userMails[0].value);
 
     if(!user){
@@ -47,6 +48,8 @@ passport.use( new FacebookStrategy({
       const user = await authService.createFaceBookOrGoogleUser(userMails[0].value,name,FACEBOOK_STRATEGY);
 
       if(!user) return  cb(new AppError(FB_AUTH_FAILED,BAD_REQUEST), false);
+
+      await authController.sendNewOauthUserEMail(userMails[0].value);
 
       return cb(null,user)
     }    
@@ -77,6 +80,8 @@ passport.use(new GoogleStrategy({
       const user = await authService.createFaceBookOrGoogleUser(userMails[0].value,name,GOOGLE_STRATEGY);
       
       if(!user) return  done(new AppError(GOOGLE_AUTH_FAILED,BAD_REQUEST), false);
+
+      await authController.sendNewOauthUserEMail(userMails[0].value);
       
       return done ('',user)
     }    

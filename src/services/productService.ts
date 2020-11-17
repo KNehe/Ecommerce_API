@@ -12,7 +12,7 @@ class ProductService{
     }
 
     updateProduct = async (productId:string,data:any):Promise<any> =>{
-        return await Product.findByIdAndUpdate(productId,{...data},{new:true,useFindAndModify:false});
+        return await Product.findByIdAndUpdate(productId,{$set: {...data, category:data.category}},{new:true,useFindAndModify:false});
     }
 
     findProductByName = async (name:string):Promise<any> =>{
