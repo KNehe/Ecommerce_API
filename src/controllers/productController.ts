@@ -29,17 +29,14 @@ class ProductController{
     
     addProduct = async  (req:Request,res:Response,next:NextFunction):Promise<any> =>{
         try{
-            const { name, price ,imageUrl, categoryId, details }: { name:string, price:number,imageUrl:string,categoryId:string, details:string} = req.body;
+            const { name, price ,imageUrl, category, details }: { name:string, price:number,imageUrl:string,category:string, details:string} = req.body;
 
-            if(!name.trim() || !price ||!imageUrl.trim() || !categoryId.trim() || !details.trim())
+            if(!name.trim() || !price ||!imageUrl.trim() || !category.trim() || !details.trim())
              return next(new AppError(NAME_PRICE_IMGURL_CATEGORY_DETAILS_REQUIRED,BAD_REQUEST));
-
-             if(!validators.isObjectIdValid(categoryId)) return next( new AppError(BAD_FORMAT_ID,BAD_REQUEST));
-
              
             if(await productService.findProductByName(name) != null) return next(new AppError(PRODUCT_EXISTS,BAD_REQUEST));
             
-            const newProduct = await productService.addProduct({name,price,imageUrl,categoryId,details});
+            const newProduct = await productService.addProduct({name,price,imageUrl,category,details});
 
             res.status(CREATED).json({
                 status: SUCCESS_MSG,
@@ -175,11 +172,9 @@ class ProductController{
             
             if(!product) return next( new AppError(PRODUCT_NOT_EXISTS,BAD_REQUEST));
 
-            const { name,price,imageUrl,categoryId,details }: { name:string,price:number,imageUrl:string , categoryId:string, details:string} = req.body;        
+            const { name,price,imageUrl,category,details }: { name:string,price:number,imageUrl:string , category:string, details:string} = req.body;        
 
-            if(!validators.isObjectIdValid(categoryId)) return next( new AppError(BAD_FORMAT_ID,BAD_REQUEST));
-
-            if(!name && !price && !imageUrl && !categoryId && !details) return next(new AppError(ATLEAST_ONE_FIELD_REQUIRED,BAD_REQUEST));
+            if(!name && !price && !imageUrl && !category && !details) return next(new AppError(ATLEAST_ONE_FIELD_REQUIRED,BAD_REQUEST));
             
             const dataToUpdate = _.pickBy(req.body,_.identity);
 
