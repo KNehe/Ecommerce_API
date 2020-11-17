@@ -3,15 +3,15 @@ import mongoose from 'mongoose';
 const productSchema = new mongoose.Schema({
     name:{
         type:String,
-        required:true
+        required:[true, 'A name is required']
     },
     price:{
         type:Number,
-        required:true
+        required:[true, 'A price is required']
     },
     imageUrl:{
         type:String,
-        required:true
+        required:[true, 'An image url is required']
     },
     category:{
         type:mongoose.Schema.Types.ObjectId,
@@ -19,7 +19,7 @@ const productSchema = new mongoose.Schema({
     },
     details:{
         type:String,
-        required:true
+        required:[true, 'Product details are required']
     }
 });
 

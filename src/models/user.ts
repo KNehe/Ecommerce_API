@@ -24,7 +24,7 @@ const userSchema = new mongoose.Schema({
             },
             strategy:{
                 type: String,
-                required:true
+                required:[true, 'An authentication strategy is required']
             },
             role:{
                 type:String,
