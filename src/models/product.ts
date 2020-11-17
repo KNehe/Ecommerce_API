@@ -13,9 +13,10 @@ const productSchema = new mongoose.Schema({
         type:String,
         required:[true, 'An image url is required']
     },
-    category:{
+    categoryId:{
         type:mongoose.Schema.Types.ObjectId,
-        required:[true, 'A category is required']
+        required:[true, 'A category id is required'],
+        ref:'Category'
     },
     details:{
         type:String,

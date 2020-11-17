@@ -12,7 +12,7 @@ class ProductService{
     }
 
     updateProduct = async (productId:string,data:any):Promise<any> =>{
-        return await Product.findByIdAndUpdate(productId,{...data},{new:true,useFindAndModify:false});
+        return await Product.findByIdAndUpdate(productId,{$set: {...data}},{new:true,useFindAndModify:false});
     }
 
     findProductByName = async (name:string):Promise<any> =>{
@@ -20,7 +20,7 @@ class ProductService{
     }
 
     getAllProducts = async ():Promise<any> =>{
-        return await Product.find();
+        return await Product.find().populate('categoryId');
     }
 
     deleteProductById = async (productId:string) :Promise<any>=>{

@@ -30,7 +30,7 @@ class AuthService{
 
     updateName = async (userId:string, name:any):Promise<any> =>{     
 
-        return await User.findByIdAndUpdate(userId,{name},{new:true,useFindAndModify:false});
+        return await User.findByIdAndUpdate(userId,{$set: {name}},{new:true,useFindAndModify:false});
 
     }
 
