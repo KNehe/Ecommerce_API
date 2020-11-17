@@ -13,6 +13,7 @@ import AppError from './utils/appError';
 import { FB_AUTH_FAILED, FB_EMAIL_REQUIRED, GOOGLE_AUTH_FAILED, GOOGLE_EMAIL_REQUIRED } from './utils/errorMessages';
 import { FACEBOOK_STRATEGY, GOOGLE_STRATEGY } from './utils/authStrategy';
 import { Strategy as GoogleStrategy } from 'passport-google-oauth20';
+import categoryRoutes from './routes/categoryRoutes';
 dotenv.config({path:'.env'});
 const app = express();
 
@@ -94,6 +95,7 @@ app.use(passport.initialize());
 app.use("/api/v1/users",userRoutes);
 app.use("/api/v1/products",productRoutes);
 app.use('/api/v1/cart',cartOrderRoutes);
+app.use('/api/v1/categories',categoryRoutes);
 
 app.all("*",(req:Request,res:Response,next:NextFunction)=>{
   res.status(NOT_FOUND).send(`${req.originalUrl} not found`);
