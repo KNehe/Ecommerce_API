@@ -8,7 +8,7 @@ const router = express.Router();
 router
     .route('/')
     .post(authController.protectRoute, authController.restrictRoute([ROLE_ADMIN]), categoryController.addCategory)
-    .get(authController.protectRoute, authController.restrictRoute([ROLE_ADMIN]), categoryController.getAllCategories);
+    .get(categoryController.getAllCategories);
 
 router
     .route('/:id')
