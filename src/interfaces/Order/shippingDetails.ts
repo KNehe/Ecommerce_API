@@ -1,7 +1,8 @@
 export interface ShippingDetails{
-    line1:string
-    address:string
-    city:string
-    postal_code:string
-    country:string
+   name: string,
+   phoneContact: string,
+   addressLine: string,
+   city: string,
+   postalCode: string,
+   country: string
 }

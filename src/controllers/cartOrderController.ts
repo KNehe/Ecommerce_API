@@ -1,14 +1,11 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { Request, Response, NextFunction } from "express";
-import { OrderSummary } from "../interfaces/Order/orderSummary";
-import { ShippingDetails } from "../interfaces/Order/shippingDetails";
-import { CreditCard } from "../interfaces/Stripe/creditCard";
+import { Order } from "../interfaces/Order/order";
 import authService from "../services/authService";
 import cartOrderService from "../services/cartOrderService";
 import productService from "../services/productService";
-import stripeService from "../services/stripeService";
 import AppError from "../utils/appError";
-import { BAD_FORMAT_ID, ERROR_ADDING_TO_CART, ERROR_DELETING_CART, ERROR_FETCHING_CART, ERROR_MAKING_PAYMENT, PAYMENT_DETAILS_REQUIRED, PRODUCT_ID_AND_USER_ID_QUANTITY_REQUIRED, PRODUCT_NOT_EXISTS, USER_WITH_ID_NOT_FOUND } from "../utils/errorMessages";
+import { BAD_FORMAT_ID, ERROR_ADDING_TO_CART, ERROR_DELETING_CART, ERROR_FETCHING_CART, ERROR_MAKING_PAYMENT, ERROR_SAVING_ORDER, PAYMENT_DETAILS_REQUIRED, PRODUCT_ID_AND_USER_ID_QUANTITY_REQUIRED, PRODUCT_NOT_EXISTS, USER_WITH_ID_NOT_FOUND } from "../utils/errorMessages";
 import { BAD_REQUEST, CREATED, INTERNAL_SERVER_ERROR, NO_CONTENT, SUCCESS } from "../utils/statusCodes";
 import { SUCCESS_MSG } from "../utils/statusMessages";
 import { ADDED_TO_CART_SUCCESSFULLY, ITEM_ALREADY_IN_CART } from "../utils/successMessages";
@@ -98,32 +95,19 @@ class CartOrderController{
         }
     }
 
-    paymentWithStripe  = async (req:Request,res:Response,next:NextFunction):Promise<any> =>{
-        try{
-            //  const {shippingDetails, orderSummary, creditCard} 
-            //  :{shippingDetails: ShippingDetails, orderSummary:OrderSummary, creditCard:CreditCard } = req.body;
-
-            //  if(!shippingDetails || !orderSummary || !creditCard){
-            //      return next(new AppError(PAYMENT_DETAILS_REQUIRED, BAD_REQUEST));
-            //  }
-           const cus = await stripeService.createCustomer({name:'NEHE', description:'desc',email:"@gmail.com"})
-           console.log("Customer", cus);
-
-           const card = await stripeService.createCard(cus.id);
-           console.log("card",card);
-
-           const charge = await stripeService.chargeCustomer({ customerId:cus.id,
-            amount:400,
-            currency:'usd',
-            customerEmail:'doe@gmail.com',
-            description:'fdf' });
-
-            next(console.log('charge',charge))
-
+    flutterStripeOrderhandler  = async (req:Request,res:Response,next:NextFunction):Promise<any> =>{
+        try{            
+            const order: Order = req.body;
+            const newOrder = await cartOrderService.addOrder(order);
+           
+            res.status(SUCCESS).json({
+                status:SUCCESS_MSG,
+                data: newOrder
+            });
 
         }catch(e){
             console.log(e.message);
-            return next( new AppError(ERROR_MAKING_PAYMENT,INTERNAL_SERVER_ERROR) );
+            return next( new AppError(ERROR_SAVING_ORDER,INTERNAL_SERVER_ERROR) );
         }
     }
 
