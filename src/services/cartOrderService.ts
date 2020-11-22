@@ -1,5 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
+import { Order } from "../interfaces/Order/order";
 import Cart from "../models/cart";
+import orderModel from "../models/order";
 
 class CartOrderService{
 
@@ -20,6 +22,10 @@ class CartOrderService{
 
     deleteCart = async (userId:string): Promise<any> =>{
         return await Cart.deleteMany({userId});
+    }
+
+    addOrder = async(order:Order): Promise<any> =>{
+        return await orderModel.create({...order});
     }
 
 }

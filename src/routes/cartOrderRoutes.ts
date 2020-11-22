@@ -10,6 +10,6 @@ router
     .get(authController.protectRoute, cartOrderController.getCart)
     .delete(authController.protectRoute, cartOrderController.deleteCart);
 
-router.post('/stripe',authController.protectRoute,cartOrderController.paymentWithStripe);
+router.post('/flutter/stripepayment',cartOrderController.flutterStripeOrderhandler);
 
 export default router;
