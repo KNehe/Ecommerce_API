@@ -12,4 +12,7 @@ router
 
 router.post('/flutter/stripepayment',cartOrderController.flutterStripeOrderhandler);
 
+router.post('/braintree/paypalpayment/:nonce',cartOrderController.flutterPaypalRequesthandler);
+
+
 export default router;

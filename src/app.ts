@@ -15,7 +15,7 @@ import { FACEBOOK_STRATEGY, GOOGLE_STRATEGY } from './utils/authStrategy';
 import { Strategy as GoogleStrategy } from 'passport-google-oauth20';
 import categoryRoutes from './routes/categoryRoutes';
 import authController from './controllers/authController';
-dotenv.config({path:'.env'});
+dotenv.config();
 const app = express();
 
 app.use(express.json());

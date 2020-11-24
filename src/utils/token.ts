@@ -1,9 +1,7 @@
 import jwt from 'jsonwebtoken';
-import dotenv from 'dotenv';
 import AppError from './appError';
 import {  INTERNAL_SERVER_ERROR } from './statusCodes';
 import { NO_JWT_SECRET_MSG , NO_JWT_EXPIRY_TIME_MSG} from './errorMessages';
-dotenv.config({path:'./../../.env'});
 
 class TokenUtils{
     
