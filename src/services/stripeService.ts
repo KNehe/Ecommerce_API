@@ -1,6 +1,4 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import dotenv from 'dotenv';
-dotenv.config({path:'./../../.env'});
 import Stripe from 'stripe';
 import { ChargeDetails } from '../interfaces/Stripe/chargeDetails';
 import { StripeCustomer } from '../interfaces/Stripe/stripeCustomer';
