@@ -4,15 +4,17 @@ import cartOrderController from '../controllers/cartOrderController';
 
 const router = express.Router();
 
-router
-    .route('/')
-    .post(authController.protectRoute, cartOrderController.addToCart)
-    .get(authController.protectRoute, cartOrderController.getCart)
-    .delete(authController.protectRoute, cartOrderController.deleteCart);
+router.post('/',authController.protectRoute, cartOrderController.addToCart);
 
 router.post('/flutter/stripepayment',cartOrderController.flutterStripeOrderhandler);
 
 router.post('/braintree/paypalpayment/:nonce',cartOrderController.flutterPaypalRequesthandler);
+
+router
+    .route('/:userid')
+    .get(authController.protectRoute, cartOrderController.getCart)
+    .delete(cartOrderController.deleteCart);
+
 
 
 export default router;

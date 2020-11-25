@@ -22,7 +22,7 @@ class CartOrderService{
     }
 
     deleteCart = async (userId:string): Promise<any> =>{
-        return await Cart.deleteMany({userId});
+        return await Cart.deleteMany({user:userId});
     }
 
     addOrder = async(order:Order): Promise<any> =>{

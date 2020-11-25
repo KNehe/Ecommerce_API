@@ -5,7 +5,7 @@ import authService from "../services/authService";
 import cartOrderService from "../services/cartOrderService";
 import productService from "../services/productService";
 import AppError from "../utils/appError";
-import { BAD_FORMAT_ID, ERROR_ADDING_TO_CART, ERROR_DELETING_CART, ERROR_FETCHING_CART, ERROR_SAVING_ORDER, PAYPAL_TRANSACTION_FAILED, PRODUCT_ID_AND_USER_ID_QUANTITY_REQUIRED, PRODUCT_NOT_EXISTS, USER_WITH_ID_NOT_FOUND } from "../utils/errorMessages";
+import { BAD_FORMAT_ID, ERROR_ADDING_TO_CART, ERROR_DELETING_CART, ERROR_FETCHING_CART, ERROR_SAVING_ORDER, PAYPAL_TRANSACTION_FAILED, PRODUCT_ID_AND_USER_ID_QUANTITY_REQUIRED, PRODUCT_NOT_EXISTS, USER_ID_REQUIRED, USER_WITH_ID_NOT_FOUND } from "../utils/errorMessages";
 import { BAD_REQUEST, CREATED, INTERNAL_SERVER_ERROR, NO_CONTENT, SUCCESS } from "../utils/statusCodes";
 import { SUCCESS_MSG } from "../utils/statusMessages";
 import { ADDED_TO_CART_SUCCESSFULLY, ITEM_ALREADY_IN_CART } from "../utils/successMessages";
@@ -52,9 +52,9 @@ class CartOrderController{
 
     getCart = async (req:Request,res:Response,next:NextFunction):Promise<any> =>{
         try{
-            const {userId} :{userId:string} = req.body;
-
-            if(!userId) return next( new AppError(PRODUCT_ID_AND_USER_ID_QUANTITY_REQUIRED,BAD_REQUEST) );
+            const userId:string = req.params.userid;
+             
+            if(!userId) return next( new AppError(USER_ID_REQUIRED,BAD_REQUEST) );
 
             if(!validators.isObjectIdValid(userId)) return next( new AppError(BAD_FORMAT_ID,BAD_REQUEST));
 
@@ -75,9 +75,9 @@ class CartOrderController{
 
     deleteCart = async (req:Request,res:Response,next:NextFunction):Promise<any> =>{
         try{
-            const {userId} :{userId:string} = req.body;
+            const userId:string = req.params.userid;
 
-            if(!userId) return next( new AppError(PRODUCT_ID_AND_USER_ID_QUANTITY_REQUIRED,BAD_REQUEST) );
+            if(!userId) return next( new AppError(USER_ID_REQUIRED,BAD_REQUEST) );
 
             if(!validators.isObjectIdValid(userId)) return next( new AppError(BAD_FORMAT_ID,BAD_REQUEST));
 
