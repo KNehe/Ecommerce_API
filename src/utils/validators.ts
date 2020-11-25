@@ -1,3 +1,4 @@
+/* eslint-disable no-useless-escape */
 import mongoose from 'mongoose';
 
 
@@ -21,7 +22,7 @@ class Validators{
     
     
     isPasswordStrong = (password:string): boolean =>{
-        const isStrong = /^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9])(?=.*?[#?!@$%^&*-]).{8,}$/.test(password,);
+        const isStrong = /^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[!@#\$%\^&\*])(?=.{6,})/.test(password);
         return isStrong;
     }
 
