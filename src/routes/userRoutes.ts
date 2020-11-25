@@ -22,5 +22,7 @@ router.get('/auth/facebook',passport.authenticate('facebook',{ session:false, sc
 
 router.get('/auth/google',passport.authenticate('google', { session:false, scope:['openid','profile', 'email']}), authController.googleAuth);
 
+router.post('/checktokenexpiry',authController.checkTokenExpiry);
+
 export default router;
 

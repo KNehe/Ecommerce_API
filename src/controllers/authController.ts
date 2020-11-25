@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import {NextFunction, Request, Response} from 'express';
 import {BAD_REQUEST, CREATED, INTERNAL_SERVER_ERROR, NO_CONTENT, SUCCESS,UNAUTHORISED} from './../utils/statusCodes';
-import {SUCCESS_MSG} from './../utils/statusMessages';
+import {AUTHORISED_MSG, JWT_IS_VALID, SUCCESS_MSG, UNAUTHORISED_MSG} from './../utils/statusMessages';
 import AppError from './../utils/appError';
 
 import { 
@@ -319,6 +319,28 @@ class AuthController{
 
     sendNewOauthUserEMail = async (email:string):Promise<any> =>{
         await mailService.sendEmail(email,SIGN_UP_THANK_YOU,SIGN_UP_THANK_YOU_SUBJECT);
+    }
+
+
+    checkTokenExpiry = async(req:Request, res:Response,next:NextFunction):Promise<any> =>{
+        const {token }: {token:string} = req.body;
+
+        if(!token) return next( new AppError(JWT_TOKEN_NOT_FOUND, BAD_REQUEST) );
+
+        const {error} =  tokenUtils.decodeJwt(token);
+
+        if(error){
+            res.status(UNAUTHORISED).json({
+                status: UNAUTHORISED_MSG,
+                message:INVALID_JWT_TOKEN
+            });
+        }else{
+            res.status(SUCCESS).json({
+                status: AUTHORISED_MSG,
+                message:JWT_IS_VALID
+            });
+        }
+        
     }
         
 
