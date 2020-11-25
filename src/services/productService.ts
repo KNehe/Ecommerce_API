@@ -20,7 +20,7 @@ class ProductService{
     }
 
     getAllProducts = async ():Promise<any> =>{
-        return await Product.find();
+        return await Product.aggregate([{ $sample :{ size : 40}}]);
     }
 
     deleteProductById = async (productId:string) :Promise<any>=>{
