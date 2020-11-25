@@ -9,8 +9,9 @@ class CartOrderService{
         return await Cart.create({product:productId,user:userId,quantity})
     }
 
-    findCartItemByProductId = async (productId:string): Promise<any> =>{
-        return await Cart.findOne({product:productId});
+    findCartItemByProductIdAnduserId = async (productId:string,userId:string): Promise<any> =>{
+        const res = await Cart.find({ product: productId , user: userId  }).exec();
+        return res.length == 0 ? null : res;
     }
 
     fetchCart = async (userId:string): Promise<any> =>{
