@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { Order } from "../interfaces/Order/order";
 import Cart from "../models/cart";
-import orderModel from "../models/order";
+import OrderModel from "../models/order";
 
 class CartOrderService{
 
@@ -26,7 +26,11 @@ class CartOrderService{
     }
 
     addOrder = async(order:Order): Promise<any> =>{
-        return await orderModel.create({...order});
+        return await OrderModel.create({...order});
+    }
+
+    getOrdersByUserId = async (userId:string):Promise<any> =>{
+        return await OrderModel.find({userId}).sort({'dateOrdered': -1});
     }
 
 }
