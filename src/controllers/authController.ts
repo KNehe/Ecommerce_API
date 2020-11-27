@@ -106,10 +106,13 @@ class AuthController{
             res.status(SUCCESS).json({
                 status:SUCCESS_MSG,
                 data:{
-                    id:user._id,
-                    name:user.name,
-                    role:user.role,
-                    token                    
+                    token,
+                    user:{
+                        id:user._id,
+                        name:user.name,
+                        email:user.email,
+                        role:user.role,  
+                    }                  
                 }
             });
 
@@ -246,10 +249,13 @@ class AuthController{
         res.status(SUCCESS).json({
             status:SUCCESS_MSG,
             data:{
-                id:req.currentUser._id,
-                name:req.currentUser.name,
-                role:req.currentUser.role,
-                token                    
+                token,
+                user:{
+                    id:req.currentUser._id,
+                    name:req.currentUser.name,
+                    email:req.currentUser.email,
+                    role:req.currentUser.role                     
+                }                   
             }
         });
 
@@ -268,10 +274,14 @@ class AuthController{
             res.status(SUCCESS).json({
                 status:SUCCESS_MSG,
                 data:{
-                    id:req.currentUser._id,
-                    name:req.currentUser.name,
-                    role:req.currentUser.role,
-                    token                    
+                    token,
+                    user:{
+                        id:req.currentUser._id,
+                        name:req.currentUser.name,
+                        email:req.currentUser.email,
+                        role:req.currentUser.role,
+                        
+                    }                  
                 }
             });
     
