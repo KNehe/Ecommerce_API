@@ -154,6 +154,28 @@ class CartOrderController{
             return next( new AppError(ERROR_SAVING_ORDER,INTERNAL_SERVER_ERROR) );
         }
     }
+    getOrders = async (req:Request,res:Response,next:NextFunction):Promise<any> =>{
+        try{
+            const userId:string = req.params.userid;
+             
+            if(!userId) return next( new AppError(USER_ID_REQUIRED,BAD_REQUEST) );
+
+            if(!validators.isObjectIdValid(userId)) return next( new AppError(BAD_FORMAT_ID,BAD_REQUEST));
+            
+            const orders = await cartOrderService.getOrdersByUserId(userId);
+           
+            res.status(SUCCESS).json({
+                status: SUCCESS_MSG,
+                data:{ orders }
+            });
+            
+        }catch(e){
+            console.log(e.message);
+            return next( new AppError(ERROR_FETCHING_CART,INTERNAL_SERVER_ERROR) );
+        }
+    }
+
+  
 
 }
 

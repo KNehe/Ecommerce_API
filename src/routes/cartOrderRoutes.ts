@@ -15,6 +15,9 @@ router
     .get(authController.protectRoute, cartOrderController.getCart)
     .delete(cartOrderController.deleteCart);
 
+router.get('/orders/user/:userid',authController.protectRoute, cartOrderController.getOrders);
+
+
 
 
 export default router;
