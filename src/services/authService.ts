@@ -44,6 +44,12 @@ class AuthService{
      return await User.create({email,name,strategy, password:"User doesn't require password"});
     }
 
+    updateEmail = async (userId:string, email:any):Promise<any> =>{     
+
+        return await User.findByIdAndUpdate(userId,{$set: {email}},{new:true,useFindAndModify:false});
+
+    }
+
     
 
 }
