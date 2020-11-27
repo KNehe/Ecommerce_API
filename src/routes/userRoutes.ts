@@ -24,5 +24,8 @@ router.get('/auth/google',passport.authenticate('google', { session:false, scope
 
 router.post('/checktokenexpiry',authController.checkTokenExpiry);
 
+router.patch('/updatemail/:id', authController.protectRoute, authController.updateEmail);
+
+
 export default router;
 

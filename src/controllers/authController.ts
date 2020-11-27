@@ -29,7 +29,9 @@ import {
     ROLE_NOT_ALLOWED,
     INVALID_EMAIL,
     SHORT_PASSWORD,
-    WEAK_PASSWORD} from './../utils/errorMessages';
+    WEAK_PASSWORD,
+    NAME_NOT_FOUND,
+    EMAIL_NOT_FOUND} from './../utils/errorMessages';
 
 import authService from './../services/authService';
 import tokenUtils from './../utils/token';
@@ -153,7 +155,7 @@ class AuthController{
 
         const {name}: {name:string} = req.body;
 
-        if( !name?.trim()) return next( new AppError(ATLEAST_ONE_FIELD_REQUIRED,BAD_REQUEST));
+        if( !name?.trim()) return next( new AppError(NAME_NOT_FOUND,BAD_REQUEST));
     
         const updatedUser = await authService.updateName(id,name);
 
@@ -351,6 +353,37 @@ class AuthController{
             });
         }
         
+    }
+
+    updateEmail = async(req:Request,res:Response,next:NextFunction):Promise<any> =>{
+        try{
+        const id : string = req.params.id.trim();
+        
+        if(!validators.isObjectIdValid(id)) return next( new AppError(BAD_FORMAT_ID,BAD_REQUEST));
+
+        if(!await authService.findUserById(id)) return next( new AppError(USER_WITH_ID_NOT_FOUND,BAD_REQUEST));    
+
+        const {email}: {email:string} = req.body;
+
+        if( !email?.trim()) return next( new AppError(EMAIL_NOT_FOUND,BAD_REQUEST));
+    
+        const updatedUser = await authService.updateEmail(id,email);
+
+        res.status(SUCCESS).json({
+            status:SUCCESS_MSG,
+            data:{
+                id:updatedUser._id,
+                name:updatedUser.name,
+                email:updatedUser.email,
+                role:updatedUser.role 
+            }
+        });
+
+       }catch(e){
+        console.log(e.message);
+        return next( new AppError(UPDATE_USER_ERR_MSG,INTERNAL_SERVER_ERROR));
+       }
+
     }
         
 
