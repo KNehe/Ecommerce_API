@@ -307,7 +307,7 @@ class AuthController{
 
         const user = await authService.findUserById(id);
 
-        if(!user) return next(new AppError(USER_ASSOCIATED_WITH_TOKEN_NOT_FOUND,BAD_REQUEST));
+        if(!user) return next(new AppError(USER_ASSOCIATED_WITH_TOKEN_NOT_FOUND,UNAUTHORISED));
 
         req.currentUser = user;
         
