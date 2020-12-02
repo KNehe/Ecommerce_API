@@ -58,7 +58,12 @@ Used to run on localhost else change it to point to your host
 Used by Oauth strategies to redirect back to the api
 
 ```
-BASE_URL=http://localhost:3000/
+BASE_URL=http://localhost:3000/ 
+
+    OR 
+
+BASE_URL=https://api.herokuapp.com/
+
 ```
 
 The api supports paypal payment using braintree by receiving a ```nonce``` from a client.
