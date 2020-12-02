@@ -7,8 +7,8 @@
     "test": "jest",
     "test:watch": "jest --watch --maxWorkers=4",
     "start:dev": "cross-env NODE_ENV=development nodemon src/index.ts",
-    "start:prod": "cross-env NODE_ENV=production npm-run-all clean lint build start",
-    "start": "node build/index.js",
+    "start": "cross-env NODE_ENV=production npm-run-all clean lint build start:prod",
+    "start:prod": "node build/src/index.js",
     "build": "tsc --project ./",
     "clean": "rimraf build",
     "lint": "eslint . --ext .ts"
