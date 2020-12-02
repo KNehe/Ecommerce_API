@@ -102,6 +102,7 @@ app.use("/api/v1/products",productRoutes);
 app.use('/api/v1/cart',cartOrderRoutes);
 app.use('/api/v1/categories',categoryRoutes);
 
+
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 app.get('/',(req:Request,res:Response,next:NextFunction)=>{
   res.status(SUCCESS).send("Welcome to Nehemiah's Ecommerce API");
