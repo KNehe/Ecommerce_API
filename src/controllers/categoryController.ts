@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { NextFunction, Request, Response } from "express";
 import AppError from "../utils/appError";
-import { BAD_FORMAT_ID, CATEGORY_EXISTS, CATEGORY_ID_REQUIRED, CATEGORY_NOT_FOUND, CATEGORY_REQUIRED, ERROR_ADDING_CATEGORY, ERROR_DELETING_CATEGORY, ERROR_FETCHING_CATEGORIES, ERROR_UPDATING_CATEGORY, ERROR_UPDATING_PRODUCT } from "../utils/errorMessages";
+import { BAD_FORMAT_ID, CATEGORY_EXISTS, CATEGORY_ID_REQUIRED, CATEGORY_NOT_FOUND, CATEGORY_REQUIRED, ERROR_ADDING_CATEGORY, ERROR_DELETING_CATEGORY, ERROR_FETCHING_CATEGORIES, ERROR_UPDATING_CATEGORY } from "../utils/errorMessages";
 import { BAD_REQUEST, CREATED, INTERNAL_SERVER_ERROR, NO_CONTENT, SUCCESS } from "../utils/statusCodes";
 import { SUCCESS_MSG } from "../utils/statusMessages";
 import validators from "../utils/validators";
