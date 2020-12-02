@@ -75,8 +75,11 @@ BRAINTREE_PRIVATE_KEY=fe6a0aa5736ecedaf6bddde990407611
 
 ## TESTING THE API
 
-Execute ```npm start:dev``` to run in development
+Execute ```npm run start:dev``` to run in development
 
-Execute ```npm start ``` to run in production
+Execute ```npm run start:prod:local ``` to run a local production build. It performs a deletion of ```dist``` folder, creates a new one
+and starts the server
+
+``` npm start ``` alone will not work locally unless you run ```npm run build``` first. However, it will work on heroku. Heroku takes care of running ```npm run build``` and ```npm start``` on it's own. I created them separately that purpose and also that heroku will fail anything attempt to delete folders or files.
 
 Execute ``` npm test ``` to run the automated tests
