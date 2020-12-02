@@ -55,7 +55,7 @@ uploadToCloud = async ( pathToFile:string ):Promise<any> =>{
 
     const uploadResult =
      await this.cloudinaryInstance.uploader.upload(pathToFile, { tags: 'logo', folder:'ecommerce_app_images', use_filename:true }, 
-     function (err, image) {
+     function (err) {
          
         if (err) return new AppError(IMAGE_UPLOAD_ERROR,INTERNAL_SERVER_ERROR);
       });

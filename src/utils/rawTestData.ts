@@ -1,0 +1,9 @@
+const base_url = '/api/v1';
+
+const invalid_jwt = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjVmYWZiNjdmNmIzNDNhMjhhNDM2ZTUwMiIsImlhdCI6MTYwNTcwMjc0OCwiZXhwIjoxNjA1Nzg5MTQ4fQ.RDAxRrveU0a3m1eMq_3Ro-Qif5-Ph7iavACtciJEpVM';
+
+const valid_admin_jwt = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjVmYzY5OTUxM2QwMDA5MGY4NDA2MjkyNSIsImlhdCI6MTYwNjg1MDg5OCwiZXhwIjoxNjA2OTM3Mjk4fQ.gjdTbHLxfw7XLQhOYnpZVcHRiQJnyvj7-M8yj8l2tFc";
+
+const valid_user_jwt = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjVmYzY5OTI3M2QwMDA5MGY4NDA2MjkyNCIsImlhdCI6MTYwNjg1MDg1NiwiZXhwIjoxNjA2OTM3MjU2fQ.7cTh0uKSqkE8noMhhEQfXdmswWvyBQAr17sC0X-ebRU';
+
+export  { base_url,invalid_jwt, valid_admin_jwt,valid_user_jwt};

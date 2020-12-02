@@ -1,9 +1,7 @@
 import jwt from 'jsonwebtoken';
-import dotenv from 'dotenv';
 import AppError from './appError';
-import { BAD_REQUEST } from './statusCodes';
+import {  INTERNAL_SERVER_ERROR } from './statusCodes';
 import { NO_JWT_SECRET_MSG , NO_JWT_EXPIRY_TIME_MSG} from './errorMessages';
-dotenv.config({path:'./config.env'});
 
 class TokenUtils{
     
@@ -14,14 +12,30 @@ class TokenUtils{
         const jwtExpiryTime = process.env.JWT_EXPIRY_TIME;
 
         if (!secret) {
-            throw new AppError(NO_JWT_SECRET_MSG,BAD_REQUEST);
+            throw new AppError(NO_JWT_SECRET_MSG,INTERNAL_SERVER_ERROR);
           }
 
         if (!jwtExpiryTime) {
-            throw new AppError(NO_JWT_EXPIRY_TIME_MSG,BAD_REQUEST);
+            throw new AppError(NO_JWT_EXPIRY_TIME_MSG,INTERNAL_SERVER_ERROR);
           }
 
         return jwt.sign({id:id},secret,{ expiresIn: jwtExpiryTime})
+    }
+
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    decodeJwt = (token:string): any =>{
+     try{
+      const secret = process.env.JWT_SECRET;
+
+      if (!secret) {
+        throw new AppError(NO_JWT_SECRET_MSG,INTERNAL_SERVER_ERROR);
+      }
+
+      return jwt.verify(token,secret);
+
+    }catch(error){
+      return {error};
+      }
     }
 
 }

@@ -23,7 +23,14 @@ const productSchema = new mongoose.Schema({
     }
 });
 
+const CartItemSchema = new mongoose.Schema({ 
+  product: productSchema,
+  quantity:  {
+    type: Number,
+    required: [true,'Quantity is required']
+},
 
-const Product = mongoose.model('Product',productSchema);
+});
 
-export default Product;
+
+export default CartItemSchema;
