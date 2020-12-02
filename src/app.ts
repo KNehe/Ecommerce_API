@@ -1,7 +1,7 @@
 import express, { NextFunction, Request, Response } from 'express';
 import morgan from 'morgan';
 import userRoutes from './routes/userRoutes';
-import { BAD_REQUEST, NOT_FOUND } from './utils/statusCodes';
+import { BAD_REQUEST, NOT_FOUND, SUCCESS } from './utils/statusCodes';
 import cors from 'cors';
 import productRoutes from './routes/productRoutes';
 import cartOrderRoutes from './routes/cartOrderRoutes';
@@ -101,6 +101,11 @@ app.use("/api/v1/users",userRoutes);
 app.use("/api/v1/products",productRoutes);
 app.use('/api/v1/cart',cartOrderRoutes);
 app.use('/api/v1/categories',categoryRoutes);
+
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
+app.get('/',(req:Request,res:Response,next:NextFunction)=>{
+  res.status(SUCCESS).send("Welcome to Nehemiah's Ecommerce API");
+});
 
 app.all("*",(req:Request,res:Response,next:NextFunction)=>{
   res.status(NOT_FOUND).send(`${req.originalUrl} not found`);
