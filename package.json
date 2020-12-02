@@ -7,12 +7,16 @@
     "test": "jest",
     "test:watch": "jest --watch --maxWorkers=4",
     "start:dev": "cross-env NODE_ENV=development nodemon src/index.ts",
-    "start": "cross-env NODE_ENV=production npm-run-all clean lint build start:prod",
-    "start:prod": "node build/src/index.js",
+    "start:prod:local": "cross-env NODE_ENV=production npm-run-all clean lint build start:init",
+    "start": "cross-env NODE_ENV=production node dist/index.js",
+    "start:init": "node dist/src/index.js",
     "build": "tsc --project ./",
     "clean": "rimraf build",
-    "lint": "eslint . --ext .ts"
+    "lint": "eslint . --ext .ts",
+    "postinstall": "tsc",
+    "deploy": "git add . && git commit -m Heroku && git push heroku master"
   },
+  "engines": { "node": "12.16.1" },
   "repository": {
     "type": "git",
     "url": "git+https://github.com/KNehe/Ecommerce_API.git"
