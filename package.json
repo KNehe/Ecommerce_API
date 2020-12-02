@@ -8,14 +8,12 @@
     "test:watch": "jest --watch --maxWorkers=4",
     "start:dev": "cross-env NODE_ENV=development nodemon src/index.ts",
     "start:prod:local": "cross-env NODE_ENV=production npm-run-all clean lint build start:init",
-    "start": "cross-env NODE_ENV=production node dist/index.js",
+    "start": "cross-env NODE_ENV=production node dist/src/index.js",
     "start:init": "node dist/src/index.js",
-    "build": "tsc --project ./",
-    "clean": "rimraf build",
-    "lint": "eslint . --ext .ts",
-    "postinstall": "tsc",
-    "deploy": "git add . && git commit -m Heroku && git push heroku master"
-  },
+    "build": "tsc",
+    "clean": "rimraf dist",
+    "lint": "eslint . --ext .ts"
+    },
   "engines": { "node": "12.16.1" },
   "repository": {
     "type": "git",
