@@ -25,6 +25,7 @@ import {  PRODUCT_ADDED } from "../utils/successMessages";
 import validators from "../utils/validators";
 import _ from 'lodash';
 
+
 class ProductController{
     
     addProduct = async  (req:Request,res:Response,next:NextFunction):Promise<any> =>{
@@ -53,30 +54,27 @@ class ProductController{
     }
 
     addProductImage = async (req:Request,res:Response,next:NextFunction):Promise<any> =>{
-        try{                                    
-
-            uploadService.writeToFolder(req,res,async (err: any)=>{                
+        try{                       
+             
+            uploadService.cloudinaryUploader(req,res,async (err: any)=>{                
                 
-                if(err) {this.handleWriteToFolderError(err,next)}
+                if(err) {this.uploaderError(err,next)}
+
                 else{   
                     
                  const fileName : string | undefined  = res?.req?.file?.filename;
                  
-                 if(!fileName) return next(new AppError(NO_IMAGE_PROVIDED,BAD_REQUEST));
-
-                 const imgPath = `${__dirname}./../uploads/${fileName}`;
-                 
-                 const imgCloudUrl = await uploadService.uploadToCloud(imgPath);
-
+                 if(!fileName) return next(new AppError(NO_IMAGE_PROVIDED,BAD_REQUEST));                 
+ 
                  res.status(CREATED).json({
                      status: SUCCESS_MSG,
                      data:{                          
-                          imageUrl:imgCloudUrl
+                          imageUrl:req.file.path,
                      }
-                 })
+                 });
                 }
                 
-             });                 
+             });   
             
 
         }catch(e){
@@ -85,7 +83,7 @@ class ProductController{
         }
     }
 
-    handleWriteToFolderError = (err:any,next:NextFunction) =>{
+    uploaderError = (err:any,next:NextFunction) =>{
 
         if(err.code == LIMIT_FILE_SIZE) return next(new AppError(LIMIT_FILE_SIZE_ERROR,BAD_REQUEST));
                     
