@@ -21,7 +21,7 @@ JWT_EXPIRY_TIME=
 ```
 - API includes sending emails using nodemailer and gmail
 
-- Enable [less secure app access](https://accounts.google.com/b/0/displayunlockcaptcha) for this to work
+- Enable [less secure app access](https://myaccount.google.com/lesssecureapps) for this to work
 
 - You may also need to [enable the secure access capture](https://accounts.google.com/b/0/displayunlockcaptcha)
 
@@ -32,7 +32,7 @@ EMAIL_AUTH_PASSWORD=<google_auth_password>
 EMAIL_FROM=
 ```
 
-- The api uploads images to cloudinary. [Create an account](https://accounts.google.com/b/0/displayunlockcaptcha) and pick configuration from the dashboard to fill below
+- The api uploads images to cloudinary. [Create an account](https://cloudinary.com/) and pick configuration from the dashboard to fill below
 ```
 CLOUD_NAME=
 CLOUDINARY_API_KEY=
