@@ -231,6 +231,33 @@ class ProductController{
         }
     }
 
+    getAllProductsWithPagination = async (request:Request, response:Response, next:NextFunction): Promise<any>=>{
+        try{
+            let page = parseInt(request.params.page) || 1;
+            let limit = parseInt(request.params.limit) || 30;
+
+            const products = await productService.getAllProductsWithPagination(page,limit);
+            
+            const totalNumberOfProducts = await productService.getNumberOfProducts();
+
+            response.status(SUCCESS).json({
+                status:SUCCESS_MSG,
+                data:{
+                    total: products[0].data.length,
+                    currentPage: page,
+                    pages: Math.ceil(totalNumberOfProducts / limit),
+                    products: products[0].data
+                }
+            });
+
+
+        }catch(error){
+            console.log(error.message);
+            return next( new AppError(ERROR_FETCHING_PRODUCTS,INTERNAL_SERVER_ERROR));
+        }
+
+    }
+
 }
 
 export default new ProductController();
