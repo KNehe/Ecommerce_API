@@ -40,6 +40,19 @@ class ProductService{
         return result != null? result : null;
     }
 
+    getAllProductsWithPagination = async (page:number, limit:number):Promise<any> =>{
+        
+        return await Product.aggregate([
+            {'$facet': {
+                data: [{ $skip: (page -  1) * limit}, { $limit: limit }]
+            }}
+        ]);
+    }
+
+    getNumberOfProducts = async (): Promise<any> =>{
+        return await Product.find().countDocuments();
+    }
+
 }
 
 export default new ProductService();

@@ -24,11 +24,11 @@ mongoose.connect(DB,{
 });
 
 
-const PORT = Number(process.env.PORT || 3000);
+const PORT = Number(process.env.PORT || 8080);
 
 
 const server = app.listen(PORT, () => {
-  console.log(`⚡️[Server]: is running at https://localhost:${PORT}`);
+  console.log(`⚡️[Server]: is running at http://localhost:${PORT}`);
 });
 
 process.on('unhandledRejection',err=>{

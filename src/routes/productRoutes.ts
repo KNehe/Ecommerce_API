@@ -21,6 +21,7 @@ router
   router.get('/search/:value',productController.searchByNameOrCategory);
   router.get('/search/category/:category',productController.searchByCategory);
 
+router.get('/page/:page/limit/:limit', productController.getAllProductsWithPagination);
 
 
 export default router;
