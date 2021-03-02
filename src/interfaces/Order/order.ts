@@ -8,5 +8,7 @@ export interface Order{
   totalItemPrice: string ,
   userId: string ,
   paymentMethod: string ,
-  userType: string 
+  userType: string,
+  dateOrdered: Date,
+  cartItems: []
 }
