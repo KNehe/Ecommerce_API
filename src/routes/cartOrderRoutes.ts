@@ -6,9 +6,9 @@ const router = express.Router();
 
 router.post('/',authController.protectRoute, cartOrderController.addToCart);
 
-router.post('/flutter/stripepayment',cartOrderController.flutterStripeOrderhandler);
+router.post('/flutter/stripepayment',cartOrderController.saveOrderHandler);
 
-router.post('/braintree/paypalpayment/:nonce',cartOrderController.flutterPaypalRequesthandler);
+router.post('/braintree/paypalpayment/:nonce',cartOrderController.paypalOrderRequestHandler);
 
 router
     .route('/:userid')

@@ -97,7 +97,7 @@ class CartOrderController{
         }
     }
 
-    flutterStripeOrderhandler  = async (req:Request,res:Response,next:NextFunction):Promise<any> =>{
+    saveOrderHandler  = async (req:Request,res:Response,next:NextFunction):Promise<any> =>{
         try{            
             const order: Order = req.body;
             const newOrder = await cartOrderService.addOrder(order);
@@ -113,7 +113,7 @@ class CartOrderController{
         }
     }
 
-    flutterPaypalRequesthandler  = async (req:Request,res:Response,next:NextFunction):Promise<any> =>{
+    paypalOrderRequestHandler  = async (req:Request,res:Response,next:NextFunction):Promise<any> =>{
         try{            
             const order: Order = req.body;
             const nonce:string = req.params.nonce;
@@ -154,6 +154,7 @@ class CartOrderController{
             return next( new AppError(ERROR_SAVING_ORDER,INTERNAL_SERVER_ERROR) );
         }
     }
+
     getOrders = async (req:Request,res:Response,next:NextFunction):Promise<any> =>{
         try{
             const userId:string = req.params.userid;
