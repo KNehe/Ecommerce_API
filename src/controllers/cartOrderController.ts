@@ -5,13 +5,15 @@ import authService from "../services/authService";
 import cartOrderService from "../services/cartOrderService";
 import productService from "../services/productService";
 import AppError from "../utils/appError";
-import { BAD_FORMAT_ID, ERROR_ADDING_TO_CART, ERROR_DELETING_CART, ERROR_FETCHING_CART, ERROR_SAVING_ORDER, PAYPAL_TRANSACTION_FAILED, PRODUCT_ID_AND_USER_ID_QUANTITY_REQUIRED, PRODUCT_NOT_EXISTS, USER_ID_REQUIRED, USER_WITH_ID_NOT_FOUND } from "../utils/errorMessages";
+import { BAD_FORMAT_ID, ERROR_ADDING_TO_CART, ERROR_DELETING_CART, ERROR_FETCHING_CART, ERROR_SAVING_ORDER, PAYPAL_TRANSACTION_FAILED, PRODUCT_ID_AND_USER_ID_QUANTITY_REQUIRED, PRODUCT_NOT_EXISTS, STRIPE_TRANSACTION_FAILED, USER_ID_REQUIRED, USER_WITH_ID_NOT_FOUND } from "../utils/errorMessages";
 import { BAD_REQUEST, CREATED, INTERNAL_SERVER_ERROR, NO_CONTENT, SUCCESS } from "../utils/statusCodes";
 import { SUCCESS_MSG } from "../utils/statusMessages";
 import { ADDED_TO_CART_SUCCESSFULLY, ITEM_ALREADY_IN_CART } from "../utils/successMessages";
 import validators from "../utils/validators";
 import braintree from "braintree";
 import crypto from 'crypto';
+const stripe = require('stripe')(process.env.STRIPE_SECRET_KEY);
+
 
 class CartOrderController{
 
@@ -173,6 +175,37 @@ class CartOrderController{
         }catch(e){
             console.log(e.message);
             return next( new AppError(ERROR_FETCHING_CART,INTERNAL_SERVER_ERROR) );
+        }
+    }
+
+    stripeOrderRequestHandler  = async (req:Request,res:Response,next:NextFunction):Promise<any> =>{
+        try{            
+            const order: Order = req.body;
+            const id:string = req.params.stripeid;
+
+            const payment = await stripe.paymentIntents.create({
+                amount: parseInt(order.total),
+                currency: 'USD',
+                description: 'Payment for item on Ntrade',
+                payment_method: id,
+                confirm: true
+            })  
+                        
+            if(payment.status === 'succeeded'){
+                const newOrder = await cartOrderService.addOrder(order);
+
+                res.status(SUCCESS).json({
+                    status:SUCCESS_MSG,
+                    data: newOrder
+                });
+
+            }else{
+                  return next(new AppError(STRIPE_TRANSACTION_FAILED,INTERNAL_SERVER_ERROR));
+            }
+
+        }catch(e){
+            console.log(e.message);
+            return next( new AppError(ERROR_SAVING_ORDER,INTERNAL_SERVER_ERROR) );
         }
     }
 

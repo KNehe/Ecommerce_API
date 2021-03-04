@@ -17,6 +17,8 @@ router
 
 router.get('/orders/user/:userid',authController.protectRoute, cartOrderController.getOrders);
 
+router.post('/stripe/stripeid/:stripeid',cartOrderController.stripeOrderRequestHandler);
+
 
 
 
