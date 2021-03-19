@@ -30,7 +30,9 @@ import {
     SHORT_PASSWORD,
     WEAK_PASSWORD,
     NAME_NOT_FOUND,
-    EMAIL_NOT_FOUND} from './../utils/errorMessages';
+    EMAIL_NOT_FOUND,
+    EMAIL_EXISTS,
+    EMAIL_IS_CURRENT} from './../utils/errorMessages';
 
 import authService from './../services/authService';
 import tokenUtils from './../utils/token';
@@ -188,7 +190,7 @@ class AuthController{
             const resetToken = user.createPasswordResetToken();
             await user.save({ validateBeforeSave:false});
 
-            const resetUrl = `http://localhost:3000/resetpassword/${resetToken}`;
+            const resetUrl = `http://localhost:3000/auth/reset_password/?token=${resetToken}`;
 
             const message = `Forgot your password? Click to reset password ${resetUrl} . If you dint forget password please ignore this email`;
             
@@ -247,18 +249,20 @@ class AuthController{
         
         const token = tokenUtils.createJwt(req.currentUser._id);
 
-        res.status(SUCCESS).json({
-            status:SUCCESS_MSG,
-            data:{
-                token,
-                user:{
-                    id:req.currentUser._id,
-                    name:req.currentUser.name,
-                    email:req.currentUser.email,
-                    role:req.currentUser.role                     
-                }                   
-            }
-        });
+        // res.status(SUCCESS).json({
+        //     status:SUCCESS_MSG,
+        //     data:{
+        //         token,
+        //         user:{
+        //             id:req.currentUser._id,
+        //             name:req.currentUser.name,
+        //             email:req.currentUser.email,
+        //             role:req.currentUser.role                     
+        //         }                   
+        //     }
+        // });
+
+        res.send(`http://localhost:3000/`)
 
         }catch(e){
             console.log(e.message);
@@ -359,15 +363,21 @@ class AuthController{
         const id : string = req.params.id.trim();
         
         if(!validators.isObjectIdValid(id)) return next( new AppError(BAD_FORMAT_ID,BAD_REQUEST));
+       
+        const user = await authService.findUserById(id)
 
-        if(!await authService.findUserById(id)) return next( new AppError(USER_WITH_ID_NOT_FOUND,BAD_REQUEST));    
+        if(!user) return next( new AppError(USER_WITH_ID_NOT_FOUND,BAD_REQUEST));    
 
         const {email}: {email:string} = req.body;
 
         if( !email?.trim()) return next( new AppError(EMAIL_NOT_FOUND,BAD_REQUEST));
-    
-        const updatedUser = await authService.updateEmail(id,email);
+        
+        if(email == user.email) return next( new AppError(EMAIL_IS_CURRENT,BAD_REQUEST));
 
+        if(await authService.findUserByEmail(email)) return next(new AppError(EMAIL_EXISTS,BAD_REQUEST))
+
+        const updatedUser = await authService.updateEmail(id,email);
+        
         res.status(SUCCESS).json({
             status:SUCCESS_MSG,
             data:{
