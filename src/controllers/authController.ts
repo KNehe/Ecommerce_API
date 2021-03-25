@@ -190,7 +190,7 @@ class AuthController{
             const resetToken = user.createPasswordResetToken();
             await user.save({ validateBeforeSave:false});
 
-            const resetUrl = `http://localhost:3000/auth/reset_password/?token=${resetToken}`;
+            const resetUrl = `https://ecommerce-web-woad.vercel.app//auth/reset_password/?token=${resetToken}`;
 
             const message = `Forgot your password? Click to reset password ${resetUrl} . If you dint forget password please ignore this email`;
             
