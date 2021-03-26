@@ -51,8 +51,8 @@ userSchema.pre<UserDocument>("save", async function(next){
     
 });
 
-userSchema.methods.createPasswordResetToken = function(){
 
+const createPasswordResetToken = function (this: any) :string{
     const resetToken = crypto.randomBytes(32).toString('hex');
 
     const expiryTime = new Date();
@@ -63,6 +63,8 @@ userSchema.methods.createPasswordResetToken = function(){
     
     return resetToken;
   };
+
+  userSchema.method('createPasswordResetToken',createPasswordResetToken)
 
 
 const User  = mongoose.model<UserDocument>('User',userSchema);
