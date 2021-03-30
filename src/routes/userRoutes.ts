@@ -26,6 +26,7 @@ router.post('/checktokenexpiry',authController.checkTokenExpiry);
 
 router.patch('/updatemail/:id', authController.protectRoute, authController.updateEmail);
 
+router.post('/google/frontendsucess/:secret',authController.googleAuthReactSuccess)
 
 export default router;
 

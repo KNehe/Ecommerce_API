@@ -32,7 +32,8 @@ import {
     NAME_NOT_FOUND,
     EMAIL_NOT_FOUND,
     EMAIL_EXISTS,
-    EMAIL_IS_CURRENT} from './../utils/errorMessages';
+    EMAIL_IS_CURRENT,
+    AUTHENTICATION_FAILED} from './../utils/errorMessages';
 
 import authService from './../services/authService';
 import tokenUtils from './../utils/token';
@@ -40,7 +41,7 @@ import passwordUtils from './../utils/password';
 import validators from '../utils/validators';
 import {PASSWORD_RESET_SUCCESSFULLY_MSG, RESET_PASSWORD_REQUEST_MSG, RESET_PASSWORD_SUBJECT, SIGN_UP_THANK_YOU, SIGN_UP_THANK_YOU_SUBJECT } from '../utils/successMessages';
 import mailService from './../services/mailService';
-import { EMAIL_PASSWORD } from '../utils/authStrategy';
+import { EMAIL_PASSWORD, GOOGLE_STRATEGY } from '../utils/authStrategy';
 import { UserDocument } from '../interfaces/models/userDocument';
 
 
@@ -393,6 +394,46 @@ class AuthController{
         return next( new AppError(UPDATE_USER_ERR_MSG,INTERNAL_SERVER_ERROR));
        }
 
+    }
+
+    googleAuthReactSuccess = async(req:Request, res:Response, next:NextFunction): Promise<any> =>{
+        try{
+            const { email, name } : {email:string, name:string} = req.body;
+
+            const secret = req.params.secret;
+
+            if(process.env.N_APP_SECRET !== secret) return next(new AppError(AUTHENTICATION_FAILED,UNAUTHORISED))
+
+            if(!email.trim() || !name) return next( new AppError(NO_EMPTY_FIELD,BAD_REQUEST) );
+
+            let user = await authService.findUserByEmail(email);
+
+            if(!user){
+                const newUser = await authService.createFaceBookOrGoogleUser(email,name,GOOGLE_STRATEGY);
+                    
+                await this.sendNewOauthUserEMail(email);
+                user = newUser          
+            } 
+            
+            const token = tokenUtils.createJwt(user._id);
+
+            res.status(SUCCESS).json({
+                status:SUCCESS_MSG,
+                data:{
+                    token,
+                    user:{
+                        id:user._id,
+                        name:user.name,
+                        email:user.email,
+                        role:user.role,  
+                    }                  
+                }
+            });
+
+        }catch(e){
+            console.log(e.message);
+            return next( new AppError(SIGN_IN_ERR_MSG,INTERNAL_SERVER_ERROR));
+        }
     }
         
 
